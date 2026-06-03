@@ -505,24 +505,64 @@ func BuildNetlinkInfoFetcher(interfaceName string) error {
 	return nil
 }
 
-func selectPin(pinsJSON []byte, clockID uint64) (int32, string, error) { //nolint:funlen,gocritic,cyclop // allow slightly longer function for sake of readability
-	entries := make([]*NetlinkPin, 0)
+func getPTPIndexForInterface(ctx clients.ExecContext, interfaceName string) (string, error) {
+	out, _, err := ctx.ExecCommand([]string{"ls", fmt.Sprintf("/sys/class/net/%s/device/ptp/", interfaceName)})
+	if err == nil {
+		for f := range strings.FieldsSeq(out) {
+			if strings.HasPrefix(f, "ptp") {
+				return strings.TrimPrefix(f, "ptp"), nil
+			}
+		}
+	}
 
-	err := json.Unmarshal(pinsJSON, &entries)
+	ethout, _, err := ctx.ExecCommand([]string{"ethtool", "-T", interfaceName})
 	if err != nil {
-		return 0, "", fmt.Errorf("failed to unmarshal netlink output: %s", err.Error())
+		return "", fmt.Errorf("failed to resolve PTP index for %s: %w", interfaceName, err)
 	}
 
-	if len(entries) == 0 {
-		return 0, "", utils.NewRequirementsNotMetError(errors.New("no pins found"))
+	for line := range strings.SplitSeq(ethout, "\n") {
+		line = strings.TrimSpace(line)
+
+		if strings.Contains(line, "PTP Hardware Clock:") || strings.Contains(line, "Hardware timestamp provider index:") {
+			index := strings.TrimSpace(strings.SplitN(line, ":", 2)[1])
+			if index != "" && index != "none" {
+				return index, nil
+			}
+		}
 	}
 
+	return "", fmt.Errorf("no PTP index found for %s", interfaceName)
+}
+
+// logPTPSysfsPins logs PHC programmable pins (e.g. SDP20) for operator diagnostics.
+// Format per pin: "<name> <function> <channel>" where function 0=none, 1=extts, 2=perout, 3=physync.
+func logPTPSysfsPins(ctx clients.ExecContext, interfaceName string) {
+	ptpIndex, err := getPTPIndexForInterface(ctx, interfaceName)
+	if err != nil {
+		log.Debugf("PTP sysfs pins unavailable for %s: %v", interfaceName, err)
+		return
+	}
+
+	command := fmt.Sprintf(
+		`for p in /sys/class/ptp/ptp%s/pins/*; do [ -f "$p" ] && echo "$(basename "$p") $(cat "$p")"; done`,
+		ptpIndex,
+	)
+
+	out, _, err := ctx.ExecCommand([]string{"/usr/bin/sh", "-c", command})
+	if err != nil || strings.TrimSpace(out) == "" {
+		log.Debugf("no PTP sysfs pin data under /sys/class/ptp/ptp%s/pins for %s", ptpIndex, interfaceName)
+		return
+	}
+
+	log.Warnf("PTP PHC pins for %s (/sys/class/ptp/ptp%s/pins): %s",
+		interfaceName, ptpIndex, strings.ReplaceAll(strings.TrimSpace(out), "\n", "; "))
+}
+
+func pickLabeledPin(entries []*NetlinkPin, clockID uint64, matchClock bool) (int32, string, bool) {
 	var onePPSPin, sma1Pin *NetlinkPin
 
-	log.Debug("entries: ", entries)
-
 	for _, pin := range entries {
-		if pin.ClockID != clockID {
+		if matchClock && pin.ClockID != clockID {
 			continue
 		}
 
@@ -556,36 +596,62 @@ func selectPin(pinsJSON []byte, clockID uint64) (int32, string, error) { //nolin
 		}
 	}
 
-	//nolint:gocritic // this is clearer
 	if choosePPS {
-		return onePPSPin.ID, OnePPSLabel, nil
+		return onePPSPin.ID, OnePPSLabel, true
 	}
 
 	if chooseSMA1 {
-		return sma1Pin.ID, SMA1Label, nil
+		return sma1Pin.ID, SMA1Label, true
 	}
 
 	if onePPSPin != nil {
-		log.Debug("Using GNSS-1PPS pin without connected parent-device state")
-		return onePPSPin.ID, OnePPSLabel, nil
+		return onePPSPin.ID, OnePPSLabel, true
 	}
 
 	if sma1Pin != nil {
-		log.Debug("Using SMA1 pin without connected parent-device state")
-		return sma1Pin.ID, SMA1Label, nil
+		return sma1Pin.ID, SMA1Label, true
 	}
 
-	for _, pin := range entries {
-		if pin.ClockID == clockID {
+	if matchClock {
+		for _, pin := range entries {
+			if pin.ClockID != clockID {
+				continue
+			}
+
 			label := pin.Label
 			if label == "" {
 				label = UnknownSubtype
 			}
 
-			log.Warnf("Using DPLL pin %d (%s) as offset pin", pin.ID, label)
-
-			return pin.ID, label, nil
+			return pin.ID, label, true
 		}
+	}
+
+	return 0, "", false
+}
+
+func selectPin(pinsJSON []byte, clockID uint64) (int32, string, error) {
+	entries := make([]*NetlinkPin, 0)
+
+	err := json.Unmarshal(pinsJSON, &entries)
+	if err != nil {
+		return 0, "", fmt.Errorf("failed to unmarshal netlink output: %s", err.Error())
+	}
+
+	if len(entries) == 0 {
+		return 0, "", utils.NewRequirementsNotMetError(errors.New("no pins found"))
+	}
+
+	log.Debug("entries: ", entries)
+
+	if pinID, label, ok := pickLabeledPin(entries, clockID, true); ok {
+		return pinID, label, nil
+	}
+
+	if pinID, label, ok := pickLabeledPin(entries, clockID, false); ok {
+		log.Warnf("No DPLL netlink pin for clock ID %d; using pin %d (%s) by board label", clockID, pinID, label)
+
+		return pinID, label, nil
 	}
 
 	return 0, "", utils.NewRequirementsNotMetError(errors.New("failed to determine correct offset pin"))
@@ -640,6 +706,7 @@ func GetNetlinkParameters(ctx clients.ExecContext, interfaceName string) (Netlin
 
 	offsetPinID, pinType, err := selectPin(pinsJSON, netlinkInfo.ClockID)
 	if err != nil {
+		logPTPSysfsPins(ctx, interfaceName)
 		return netlinkInfo, err
 	}
 
