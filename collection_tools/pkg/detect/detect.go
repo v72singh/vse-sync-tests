@@ -118,20 +118,52 @@ var ts2phcNotMaster = regexp.MustCompile(`ts2phc.master\s+0`)
 var ptp4lMasterOnly = regexp.MustCompile(`masterOnly\s+1`)
 var ptp4lServerOnly = regexp.MustCompile(`serverOnly\s+1`)
 
+func parsePTPClockIndexFromEthtool(out string) (string, bool) {
+	for line := range strings.SplitSeq(out, "\n") {
+		line = strings.TrimSpace(line)
+
+		if strings.Contains(line, "PTP Hardware Clock:") || strings.Contains(line, "Hardware timestamp provider index:") {
+			clockNumber := strings.TrimSpace(strings.SplitN(line, ":", 2)[1])
+			if clockNumber != "" && clockNumber != "none" {
+				return clockNumber, true
+			}
+		}
+	}
+
+	return "", false
+}
+
+func getPTPClockDeviceFromSysfs(ctx clients.ExecContext, interfaceName string) (string, error) {
+	out, _, err := ctx.ExecCommand([]string{"ls", fmt.Sprintf("/sys/class/net/%s/device/ptp/", interfaceName)})
+	if err != nil {
+		return "", fmt.Errorf("failed to list PTP devices in sysfs: %w", err)
+	}
+
+	for f := range strings.FieldsSeq(out) {
+		if strings.HasPrefix(f, "ptp") {
+			return "/dev/" + f, nil
+		}
+	}
+
+	return "", errors.New("no PTP clock device found in sysfs")
+}
+
 func getPTPClockDevice(ctx clients.ExecContext, interfaceName string) (string, error) {
 	out, _, err := ctx.ExecCommand([]string{"ethtool", "-T", interfaceName})
 	if err != nil {
 		return "", fmt.Errorf("failed to get ptp clock number: %w", err)
 	}
 
-	for line := range strings.SplitSeq(out, "\n") {
-		if strings.Contains(line, "PTP Hardware Clock:") {
-			clockNumber := strings.TrimSpace(strings.Split(line, ":")[1])
-			return "/dev/ptp" + clockNumber, nil
-		}
+	if clockNumber, ok := parsePTPClockIndexFromEthtool(out); ok {
+		return "/dev/ptp" + clockNumber, nil
 	}
 
-	return "", errors.New("no PTP clock device found")
+	ptpDev, err := getPTPClockDeviceFromSysfs(ctx, interfaceName)
+	if err != nil {
+		return "", errors.New("no PTP clock device found")
+	}
+
+	return ptpDev, nil
 }
 
 func getDetectedInterfaces(ctx clients.ExecContext, config map[string][]string) []DetectedInterface {
@@ -151,7 +183,10 @@ func getDetectedInterfaces(ctx clients.ExecContext, config map[string][]string) 
 		}
 
 		ptpDev, err := getPTPClockDevice(ctx, section)
-		utils.IfErrorExitOrPanic(err)
+		if err != nil {
+			log.Warnf("Failed to get PTP clock device for interface %s: %v", section, err)
+			continue
+		}
 
 		detected = append(detected, DetectedInterface{
 			Name:               strings.TrimSpace(section),
