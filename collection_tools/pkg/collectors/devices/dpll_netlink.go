@@ -238,16 +238,14 @@ func BuildDPLLNetlinkDeviceFetcher(params NetlinkParameters) error { //nolint:du
 		[]*clients.Cmd{dateCmd},
 		[]fetcher.AddCommandArgs{
 			{
-				Key: "dpll-netlink-device",
-				Command: "/linux/tools/net/ynl/cli.py --spec /linux/Documentation/netlink/specs/dpll.yaml --dump device-get | " +
-					"python3 /root/custom_scripts/json_encoder.py",
-				Trim: true,
+				Key:     "dpll-netlink-device",
+				Command: "/linux/tools/net/ynl/cli.py --spec /linux/Documentation/netlink/specs/dpll.yaml --dump device-get --output-json",
+				Trim:    true,
 			},
 			{
 				Key: "dpll-netlink-offset",
 				Command: fmt.Sprintf(
-					"/linux/tools/net/ynl/cli.py --spec /linux/Documentation/netlink/specs/dpll.yaml --do pin-get --json %s | "+
-						"python3 /root/custom_scripts/json_encoder.py",
+					"/linux/tools/net/ynl/cli.py --spec /linux/Documentation/netlink/specs/dpll.yaml --do pin-get --json %s --output-json",
 					fmt.Sprintf("'{\"id\": %d}'", params.OffsetPin),
 				),
 				Trim: true,
