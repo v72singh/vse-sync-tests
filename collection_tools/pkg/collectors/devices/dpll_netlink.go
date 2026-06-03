@@ -302,10 +302,9 @@ func BuildNetlinkInfoFetcher(interfaceName string) error {
 				Trim: true,
 			},
 			{
-				Key: "dpll-netlink-pins",
-				Command: "/linux/tools/net/ynl/cli.py --spec /linux/Documentation/netlink/specs/dpll.yaml --dump pin-get | " +
-					"python3 /root/custom_scripts/json_encoder.py",
-				Trim: true,
+				Key:     "dpll-netlink-pins",
+				Command: "/linux/tools/net/ynl/cli.py --spec /linux/Documentation/netlink/specs/dpll.yaml --dump pin-get --output-json",
+				Trim:    true,
 			},
 		},
 	)
