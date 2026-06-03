@@ -9,6 +9,7 @@ import (
 	"math"
 	"strconv"
 	"strings"
+	"sync"
 
 	log "github.com/sirupsen/logrus"
 
@@ -184,7 +185,9 @@ type NetlinkFrequencySupportedRange struct {
 // },
 
 var (
-	dpllClockIDFetcher map[string]*fetcher.Fetcher
+	dpllClockIDFetcher   map[string]*fetcher.Fetcher
+	deviceDumpWarnOnce   sync.Once
+	pinDumpWarnOnce      sync.Once
 )
 
 func init() {
@@ -203,30 +206,37 @@ func runTimestamp(ctx clients.ExecContext) (string, error) {
 func collectDPLLNetlinkSample(ctx clients.ExecContext, params NetlinkParameters) (map[string]any, error) {
 	processedResult := make(map[string]any)
 
-	devicesJSON, err := discoverDevicesJSON(ctx)
-	if err != nil {
-		return processedResult, err
+	deviceIDs := params.DeviceIDs
+	if len(deviceIDs) == 0 {
+		deviceIDs = []int{0, 1}
 	}
 
-	entries := make([]NetlinkStateEntry, 0)
-
-	err = json.Unmarshal(devicesJSON, &entries)
-	if err != nil {
-		return processedResult, fmt.Errorf("failed to unmarshal netlink device output: %w", err)
-	}
-
-	log.Debug("entries: ", entries)
-
-	for _, entry := range entries {
-		if entry.ClockID == params.ClockID {
-			state, ok := states[entry.LockStatus]
-			if !ok {
-				log.Errorf("Unknown state: %s", entry.LockStatus)
-				state = "-1"
-			}
-
-			processedResult[entry.ClockType] = state
+	for _, deviceID := range deviceIDs {
+		out, err := runDPLLYNLCommand(ctx, fmt.Sprintf("--do device-get --json '{\"id\": %d}'", deviceID))
+		if err != nil || out == "" {
+			log.Debugf("skipping DPLL device poll for id %d: %v", deviceID, err)
+			continue
 		}
+
+		var entry NetlinkStateEntry
+
+		err = json.Unmarshal([]byte(out), &entry)
+		if err != nil {
+			log.Debugf("failed to parse DPLL device %d: %v", deviceID, err)
+			continue
+		}
+
+		if entry.ClockID != params.ClockID {
+			continue
+		}
+
+		state, ok := states[entry.LockStatus]
+		if !ok {
+			log.Errorf("Unknown state: %s", entry.LockStatus)
+			state = "-1"
+		}
+
+		processedResult[entry.ClockType] = state
 	}
 
 	pinOut, err := runDPLLYNLCommand(ctx, fmt.Sprintf("--do pin-get --json '{\"id\": %d}'", params.OffsetPin))
@@ -255,16 +265,53 @@ func collectDPLLNetlinkSample(ctx clients.ExecContext, params NetlinkParameters)
 
 // ValidateNetlinkDPLLSupported checks that required ynl operations work on this node.
 func ValidateNetlinkDPLLSupported(ctx clients.ExecContext, params NetlinkParameters) error {
-	if _, err := discoverDevicesJSON(ctx); err != nil {
-		return err
+	if len(params.DeviceIDs) == 0 {
+		return errors.New("no DPLL device IDs resolved for this interface")
 	}
 
-	_, err := runDPLLYNLCommand(ctx, fmt.Sprintf("--do pin-get --json '{\"id\": %d}'", params.OffsetPin))
+	_, err := runDPLLYNLCommand(
+		ctx,
+		fmt.Sprintf("--do device-get --json '{\"id\": %d}'", params.DeviceIDs[0]),
+	)
+	if err != nil {
+		return fmt.Errorf("device %d unavailable: %w", params.DeviceIDs[0], err)
+	}
+
+	_, err = runDPLLYNLCommand(ctx, fmt.Sprintf("--do pin-get --json '{\"id\": %d}'", params.OffsetPin))
 	if err != nil {
 		return fmt.Errorf("offset pin %d unavailable: %w", params.OffsetPin, err)
 	}
 
 	return nil
+}
+
+func resolveDeviceIDsForClock(ctx clients.ExecContext, clockID uint64) ([]int, error) {
+	devicesJSON, err := discoverDevicesJSON(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	entries := make([]NetlinkStateEntry, 0)
+
+	err = json.Unmarshal(devicesJSON, &entries)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal netlink device list: %w", err)
+	}
+
+	deviceIDs := make([]int, 0, len(entries))
+
+	for _, entry := range entries {
+		if entry.ClockID == clockID {
+			deviceIDs = append(deviceIDs, entry.ID)
+		}
+	}
+
+	if len(deviceIDs) == 0 {
+		log.Warnf("No DPLL devices matched clock ID %d, defaulting to device ids 0 and 1", clockID)
+		return []int{0, 1}, nil
+	}
+
+	return deviceIDs, nil
 }
 
 // GetDevDPLLNetlinkInfo returns the device DPLL info for an interface.
@@ -336,7 +383,9 @@ func discoverDevicesJSON(ctx clients.ExecContext) ([]byte, error) {
 		log.Debugf("DPLL device-get dump returned unusable data: %v", unmarshalErr)
 	}
 
-	log.Warn("DPLL device-get dump unavailable, probing devices individually")
+	deviceDumpWarnOnce.Do(func() {
+		log.Warn("DPLL device-get dump unavailable, probing devices individually (once at setup)")
+	})
 
 	return probeDevicesIndividually(ctx)
 }
@@ -381,7 +430,9 @@ func discoverPinsJSON(ctx clients.ExecContext) ([]byte, error) {
 		log.Debugf("DPLL pin-get dump returned unusable data: %v", unmarshalErr)
 	}
 
-	log.Warn("DPLL pin-get dump unavailable, probing pins individually")
+	pinDumpWarnOnce.Do(func() {
+		log.Warn("DPLL pin-get dump unavailable, probing pins individually (once at setup)")
+	})
 
 	return probePinsIndividually(ctx)
 }
@@ -501,12 +552,12 @@ func selectPin(pinsJSON []byte, clockID uint64) (int32, string, error) { //nolin
 
 	// Fall back to labeled pins without requiring parent link state.
 	if onePPSPin != nil {
-		log.Warn("Using GNSS-1PPS pin without connected parent-device state")
+		log.Debug("Using GNSS-1PPS pin without connected parent-device state")
 		return onePPSPin.ID, OnePPSLabel, nil
 	}
 
 	if sma1Pin != nil {
-		log.Warn("Using SMA1 pin without connected parent-device state")
+		log.Debug("Using SMA1 pin without connected parent-device state")
 		return sma1Pin.ID, SMA1Label, nil
 	}
 
@@ -541,10 +592,11 @@ func postProcessDPLLNetlinkClockID(result map[string]string) (map[string]any, er
 }
 
 type NetlinkParameters struct {
-	Timestamp string `fetcherKey:"date"      json:"timestamp"`
-	PinType   string `fetcherKey:"pinType"   json:"pinType"`
-	ClockID   uint64 `fetcherKey:"clockID"   json:"clockId"`
-	OffsetPin int32  `fetcherKey:"offsetPin" json:"offsetPin"`
+	Timestamp  string `fetcherKey:"date"      json:"timestamp"`
+	PinType    string `fetcherKey:"pinType"   json:"pinType"`
+	ClockID    uint64 `fetcherKey:"clockID"   json:"clockId"`
+	OffsetPin  int32  `fetcherKey:"offsetPin" json:"offsetPin"`
+	DeviceIDs  []int  `json:"deviceIds"`
 }
 
 func GetNetlinkParameters(ctx clients.ExecContext, interfaceName string) (NetlinkParameters, error) {
@@ -580,6 +632,13 @@ func GetNetlinkParameters(ctx clients.ExecContext, interfaceName string) (Netlin
 
 	netlinkInfo.OffsetPin = offsetPinID
 	netlinkInfo.PinType = pinType
+
+	deviceIDs, err := resolveDeviceIDsForClock(ctx, netlinkInfo.ClockID)
+	if err != nil {
+		return netlinkInfo, fmt.Errorf("failed to resolve dpll device ids: %w", err)
+	}
+
+	netlinkInfo.DeviceIDs = deviceIDs
 
 	return netlinkInfo, nil
 }
