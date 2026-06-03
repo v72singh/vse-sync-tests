@@ -32,8 +32,8 @@ func (dpllInfo *DevFilesystemDPLLInfo) GetAnalyserFormat() ([]*callbacks.Analyse
 		ID: "dpll/time-error",
 		Data: map[string]any{
 			"timestamp": dpllInfo.Timestamp,
-			"eecstate":  dpllInfo.EECState,
-			"state":     dpllInfo.PPSState,
+			"eecstate":  normalizeDPLLState(dpllInfo.EECState),
+			"state":     normalizeDPLLState(dpllInfo.PPSState),
 			// Convert to nano seconds
 			"terror": dpllInfo.PPSOffset / unitConversionFactor,
 		},

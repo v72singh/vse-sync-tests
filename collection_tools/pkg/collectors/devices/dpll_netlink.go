@@ -28,6 +28,28 @@ var states = map[string]string{
 	"holdover":      "4",
 }
 
+const unknownDPLLState = "-1"
+
+// normalizeDPLLState maps sysfs/netlink state strings to integer codes expected by postprocess.
+func normalizeDPLLState(state string) string {
+	state = strings.TrimSpace(state)
+	if state == "" {
+		return unknownDPLLState
+	}
+
+	if _, err := strconv.Atoi(state); err == nil {
+		return state
+	}
+
+	if mapped, ok := states[state]; ok {
+		return mapped
+	}
+
+	log.Debugf("unknown DPLL state value %q, defaulting to %s", state, unknownDPLLState)
+
+	return unknownDPLLState
+}
+
 const (
 	dpllYNLCLIPath     = "/linux/tools/net/ynl/cli.py"
 	dpllYNLSpecPath    = "/linux/Documentation/netlink/specs/dpll.yaml"
@@ -79,8 +101,8 @@ func (dpllInfo *DevNetlinkDPLLInfo) GetAnalyserFormat() ([]*callbacks.AnalyserFo
 		ID: subType + "/time-error",
 		Data: map[string]any{
 			"timestamp": dpllInfo.Timestamp,
-			"eecstate":  dpllInfo.EECState,
-			"state":     dpllInfo.PPSState,
+			"eecstate":  normalizeDPLLState(dpllInfo.EECState),
+			"state":     normalizeDPLLState(dpllInfo.PPSState),
 			"terror":    convertNetlinkOffset(dpllInfo.PPSOffset),
 			"eecterror": convertNetlinkOffset(dpllInfo.EECOffset),
 		},
