@@ -3,12 +3,14 @@
 package collectors
 
 import (
+	"errors"
 	"fmt"
 
 	log "github.com/sirupsen/logrus"
 
 	"github.com/openshift-kni/vse-sync-tests/collection_tools/pkg/collectors/contexts"
 	"github.com/openshift-kni/vse-sync-tests/collection_tools/pkg/collectors/devices"
+	"github.com/openshift-kni/vse-sync-tests/collection_tools/pkg/utils"
 )
 
 const (
@@ -27,9 +29,21 @@ func NewDPLLCollector(constructor *CollectionConstructor) (Collector, error) {
 
 	if dpllFSExists && err == nil {
 		return NewDPLLFilesystemCollector(constructor)
-	} else {
-		return NewDPLLNetlinkCollector(constructor)
 	}
+
+	collector, netlinkErr := NewDPLLNetlinkCollector(constructor)
+	if netlinkErr == nil {
+		return collector, nil
+	}
+
+	var missingRequirements *utils.RequirementsNotMetError
+	if errors.As(netlinkErr, &missingRequirements) {
+		return nil, netlinkErr
+	}
+
+	log.Warnf("DPLL netlink collector unavailable for %s: %v", constructor.PTPInterface, netlinkErr)
+
+	return nil, utils.NewRequirementsNotMetError(fmt.Errorf("DPLL collector unavailable: %w", netlinkErr))
 }
 
 func init() {

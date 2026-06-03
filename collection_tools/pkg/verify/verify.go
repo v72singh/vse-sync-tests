@@ -70,29 +70,37 @@ func getGPSStatusValidation(
 
 	// If we need to do this for more validations then consider a generic
 	var (
-		antCheck   *validations.GNSSAntStatus
+		antCheck   validations.Validation
+		navCheck   validations.Validation
 		gpsDetails *devices.GPSDetails
 	)
 
 	for range antPowerRetries {
 		gpsDetails, err = devices.GetGPSNav(ctx)
 		if err != nil {
+			log.Warnf("GPS status fetch attempt failed: %v", err)
 			continue
 		}
 
-		if antCheck = validations.NewGNSSAntStatus(gpsDetails); antCheck.Verify() == nil {
+		antCheck = validations.NewGNSSAntStatus(gpsDetails)
+		if antCheck.Verify() == nil {
 			break
 		}
 
 		time.Sleep(time.Second)
 	}
 
-	utils.IfErrorExitOrPanic(err)
-
-	return []validations.Validation{
-		antCheck,
-		validations.NewGNSSNavStatus(gpsDetails),
+	if err != nil {
+		log.Warnf("Skipping GNSS status validations: %v", err)
+		return []validations.Validation{
+			validations.NewUnknownGNSSAntStatus(err),
+			validations.NewUnknownGNSSNavStatus(err),
+		}
 	}
+
+	navCheck = validations.NewGNSSNavStatus(gpsDetails)
+
+	return []validations.Validation{antCheck, navCheck}
 }
 
 func getValidations(interfaceName, ptpNodeName, kubeConfig, clockType string) []validations.Validation {

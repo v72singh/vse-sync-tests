@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"math"
 	"strconv"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 
@@ -27,6 +28,11 @@ var states = map[string]string{
 }
 
 const (
+	dpllYNLCLIPath  = "/linux/tools/net/ynl/cli.py"
+	dpllYNLSpecPath = "/linux/Documentation/netlink/specs/dpll.yaml"
+	dpllJSONEncoder = "python3 /root/custom_scripts/json_encoder.py"
+	maxDPLLPinProbe  = 32
+
 	OnePPSLabel = "GNSS-1PPS"
 	SMA1Label   = "SMA1"
 	SMA2Label   = "SMA2"
@@ -290,6 +296,72 @@ func GetDevDPLLNetlinkInfo(ctx clients.ExecContext, params NetlinkParameters) (*
 	return dpllInfo, nil
 }
 
+func runDPLLYNLCommand(ctx clients.ExecContext, args string) (string, error) {
+	command := fmt.Sprintf(
+		"%s --spec %s %s | %s",
+		dpllYNLCLIPath,
+		dpllYNLSpecPath,
+		args,
+		dpllJSONEncoder,
+	)
+
+	stdout, stderr, err := ctx.ExecCommand([]string{"/usr/bin/sh", "-c", command})
+	if stderr != "" {
+		log.Debugf("DPLL ynl stderr: %s", stderr)
+	}
+
+	if err != nil {
+		return "", fmt.Errorf("dpll ynl command failed: %w", err)
+	}
+
+	return strings.TrimSpace(stdout), nil
+}
+
+func discoverPinsJSON(ctx clients.ExecContext) ([]byte, error) {
+	out, err := runDPLLYNLCommand(ctx, "--dump pin-get")
+	if err == nil && out != "" {
+		entries := make([]*NetlinkPin, 0)
+
+		unmarshalErr := json.Unmarshal([]byte(out), &entries)
+		if unmarshalErr == nil && len(entries) > 0 {
+			return []byte(out), nil
+		}
+
+		log.Debugf("DPLL pin-get dump returned unusable data: %v", unmarshalErr)
+	}
+
+	log.Warn("DPLL pin-get dump unavailable, probing pins individually")
+
+	return probePinsIndividually(ctx)
+}
+
+func probePinsIndividually(ctx clients.ExecContext) ([]byte, error) {
+	pins := make([]*NetlinkPin, 0)
+
+	for id := int32(0); id < maxDPLLPinProbe; id++ {
+		out, err := runDPLLYNLCommand(ctx, fmt.Sprintf("--do pin-get --json '{\"id\": %d}'", id))
+		if err != nil || out == "" {
+			continue
+		}
+
+		var pin NetlinkPin
+
+		unmarshalErr := json.Unmarshal([]byte(out), &pin)
+		if unmarshalErr != nil {
+			log.Debugf("skipping DPLL pin %d: %v", id, unmarshalErr)
+			continue
+		}
+
+		pins = append(pins, &pin)
+	}
+
+	if len(pins) == 0 {
+		return nil, utils.NewRequirementsNotMetError(errors.New("no pins found via individual pin-get"))
+	}
+
+	return json.Marshal(pins)
+}
+
 func BuildNetlinkInfoFetcher(interfaceName string) error {
 	fetcherInst, err := fetcher.FetcherFactory(
 		[]*clients.Cmd{dateCmd},
@@ -301,12 +373,6 @@ func BuildNetlinkInfoFetcher(interfaceName string) error {
 						` echo $(lspci -v | grep $BUSID -A 20 |grep 'Serial Number' | awk '{print $NF}' | tr -d '-')`,
 					interfaceName,
 				),
-				Trim: true,
-			},
-			{
-				Key: "dpll-netlink-pins",
-				Command: "/linux/tools/net/ynl/cli.py --spec /linux/Documentation/netlink/specs/dpll.yaml --dump pin-get | " +
-					"python3 /root/custom_scripts/json_encoder.py",
 				Trim: true,
 			},
 		},
@@ -334,7 +400,7 @@ func selectPin(pinsJSON []byte, clockID uint64) (int32, string, error) { //nolin
 		return 0, "", utils.NewRequirementsNotMetError(errors.New("no pins found"))
 	}
 
-	var OnePPSPin, SMA1Pin *NetlinkPin
+	var onePPSPin, sma1Pin *NetlinkPin
 
 	log.Debug("entries: ", entries)
 
@@ -345,37 +411,41 @@ func selectPin(pinsJSON []byte, clockID uint64) (int32, string, error) { //nolin
 
 		switch pin.Label {
 		case OnePPSLabel:
-			OnePPSPin = pin
+			onePPSPin = pin
 		case SMA1Label:
-			SMA1Pin = pin
+			sma1Pin = pin
 		}
 	}
 
-	choosePPS := true
+	choosePPS := onePPSPin != nil
 
-	for _, parentDev := range OnePPSPin.ParentDevices {
-		if parentDev.State != ConnectedState {
-			choosePPS = false
-			break
+	if choosePPS {
+		for _, parentDev := range onePPSPin.ParentDevices {
+			if parentDev.State != ConnectedState {
+				choosePPS = false
+				break
+			}
 		}
 	}
 
-	chooseSMA1 := true
+	chooseSMA1 := sma1Pin != nil
 
-	for _, parentDev := range SMA1Pin.ParentDevices {
-		if parentDev.Direction != InputDirection || parentDev.State != ConnectedState {
-			chooseSMA1 = false
-			break
+	if chooseSMA1 {
+		for _, parentDev := range sma1Pin.ParentDevices {
+			if parentDev.Direction != InputDirection || parentDev.State != ConnectedState {
+				chooseSMA1 = false
+				break
+			}
 		}
 	}
 
 	//nolint:gocritic // this is clearer
 	if choosePPS {
-		return OnePPSPin.ID, OnePPSLabel, nil
+		return onePPSPin.ID, OnePPSLabel, nil
 	}
 
 	if chooseSMA1 {
-		return SMA1Pin.ID, SMA1Label, nil
+		return sma1Pin.ID, SMA1Label, nil
 	}
 
 	return 0, "", errors.New("failed to determin correct offset pin")
@@ -390,14 +460,6 @@ func postProcessDPLLNetlinkClockID(result map[string]string) (map[string]any, er
 	}
 
 	processedResult["clockID"] = clockID
-
-	offsetPintID, pinType, err := selectPin([]byte(result["dpll-netlink-pins"]), clockID)
-	if err != nil {
-		return processedResult, err
-	}
-
-	processedResult["offsetPin"] = offsetPintID
-	processedResult["pinType"] = pinType
 
 	return processedResult, nil
 }
@@ -429,6 +491,19 @@ func GetNetlinkParameters(ctx clients.ExecContext, interfaceName string) (Netlin
 	if err != nil {
 		return netlinkInfo, fmt.Errorf("failed to fetch netlink info %w", err)
 	}
+
+	pinsJSON, err := discoverPinsJSON(ctx)
+	if err != nil {
+		return netlinkInfo, fmt.Errorf("failed to discover dpll pins: %w", err)
+	}
+
+	offsetPinID, pinType, err := selectPin(pinsJSON, netlinkInfo.ClockID)
+	if err != nil {
+		return netlinkInfo, err
+	}
+
+	netlinkInfo.OffsetPin = offsetPinID
+	netlinkInfo.PinType = pinType
 
 	return netlinkInfo, nil
 }

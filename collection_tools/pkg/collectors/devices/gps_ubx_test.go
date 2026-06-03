@@ -91,4 +91,44 @@ var _ = Describe("GetGPSNav", func() {
 
 		})
 	})
+
+	When("called GetGPSNav with newer ubxtool MON-RF output", func() {
+		It("should parse antenna blocks", func() {
+			expectedInput := "echo '<GPS>';ubxtool -t -p NAV-STATUS -p NAV-CLOCK -p MON-RF -P 29.20;echo '</GPS>';"
+
+			expectedOutput := strings.Join([]string{
+				"<GPS>",
+				"1780484520.8614",
+				"UBX-MON-RF:",
+				" version 0 nBlocks 2 reserved1 x0",
+				"   0: blockId 0 flags x0 antStatus 2 antPower 1 postStatus 0 reserved2 x0",
+				"      noisePerMS 87 agcCnt 6318 jamInd 5 ofsI 8 magI 169 ofsQ 10 magQ 163",
+				"      reserved3 0 0 0",
+				"   1: blockId 1 flags x0 antStatus 2 antPower 1 postStatus 0 reserved2 x0",
+				"      noisePerMS 50 agcCnt 6669 jamInd 2 ofsI 13 magI 168 ofsQ 7 magQ 167",
+				"      reserved3 0 0 0",
+				"",
+				"1780484521.0667",
+				"UBX-NAV-STATUS:",
+				"  iTOW 298939000 gpsFix 5 flags 0xdd fixStat 0x0 flags2 0x8",
+				"  ttff 34269, msss 11081275",
+				"",
+				"1780484521.0668",
+				"UBX-NAV-CLOCK:",
+				"  iTOW 298939000 clkB 709233 clkD 432 tAcc 2 fAcc 144",
+				"</GPS>",
+			}, "\n")
+			response[expectedInput] = []byte(expectedOutput)
+
+			ctx, err := clients.NewContainerContext(clientset, "TestNamespace", "Test", "TestContainer", "TestNodeName")
+			Expect(err).NotTo(HaveOccurred())
+
+			gpsInfo, err := devices.GetGPSNav(ctx)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(gpsInfo.AntennaDetails).To(HaveLen(2))
+			Expect(gpsInfo.AntennaDetails[0].Status).To(Equal(2))
+			Expect(gpsInfo.AntennaDetails[0].Power).To(Equal(1))
+			Expect(gpsInfo.NavStatus.GPSFix).To(Equal(5))
+		})
+	})
 })
