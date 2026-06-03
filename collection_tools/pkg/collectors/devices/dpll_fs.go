@@ -124,49 +124,17 @@ func GetDevDPLLFilesystemInfo(ctx clients.ExecContext, interfaceName string) (*D
 }
 
 func IsDPLLFileSystemPresent(ctx clients.ExecContext, interfaceName string) (bool, error) {
-	fetcherInst, err := fetcher.FetcherFactory(
-		[]*clients.Cmd{},
-		[]fetcher.AddCommandArgs{
-			{
-				Key:     "paths",
-				Command: fmt.Sprintf("ls -1 /sys/class/net/%s/device/", interfaceName),
-				Trim:    true,
-			},
-		},
+	command := fmt.Sprintf(
+		"test -f /sys/class/net/%s/device/dpll_0_state && "+
+			"test -f /sys/class/net/%s/device/dpll_1_state && "+
+			"test -f /sys/class/net/%s/device/dpll_1_offset && echo yes",
+		interfaceName, interfaceName, interfaceName,
 	)
+
+	stdout, _, err := ctx.ExecCommand([]string{"/usr/bin/sh", "-c", command})
 	if err != nil {
-		return false, fmt.Errorf("failed to build fetcher to check DPLL FS  %w", err)
+		return false, nil
 	}
 
-	type Paths struct {
-		Paths string `fetcherKey:"paths"`
-	}
-
-	paths := Paths{}
-	expected := map[string]bool{
-		"dpll_0_state":  false,
-		"dpll_1_state":  false,
-		"dpll_1_offset": false,
-	}
-
-	err = fetcherInst.Fetch(ctx, &paths)
-	if err != nil {
-		return false, fmt.Errorf("failed to check DPLL FS  %w", err)
-	}
-
-	for p := range strings.SplitSeq(paths.Paths, "\n") {
-		for expectedPath := range expected {
-			if strings.Trim(p, " ") == expectedPath {
-				expected[expectedPath] = true
-			}
-		}
-	}
-
-	for _, value := range expected {
-		if !value {
-			return false, nil
-		}
-	}
-
-	return true, nil
+	return strings.TrimSpace(stdout) == "yes", nil
 }

@@ -36,12 +36,18 @@ func NewDPLLCollector(constructor *CollectionConstructor) (Collector, error) {
 		return collector, nil
 	}
 
+	log.Warnf("DPLL netlink collector unavailable for %s: %v", constructor.PTPInterface, netlinkErr)
+
+	dpllFSExists, fsErr := devices.IsDPLLFileSystemPresent(ctx, constructor.PTPInterface)
+	if dpllFSExists && fsErr == nil {
+		log.Infof("Using DPLL sysfs collector for %s after netlink setup failed", constructor.PTPInterface)
+		return NewDPLLFilesystemCollector(constructor)
+	}
+
 	var missingRequirements *utils.RequirementsNotMetError
 	if errors.As(netlinkErr, &missingRequirements) {
 		return nil, netlinkErr
 	}
-
-	log.Warnf("DPLL netlink collector unavailable for %s: %v", constructor.PTPInterface, netlinkErr)
 
 	return nil, utils.NewRequirementsNotMetError(fmt.Errorf("DPLL collector unavailable: %w", netlinkErr))
 }
