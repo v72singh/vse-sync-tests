@@ -88,7 +88,7 @@ var (
 	ubxAntFullBlockRegex = regexp.MustCompile(
 		timeStampPattern +
 			`\nUBX-MON-RF:\n` +
-			`\s+version \d nBlocks (\d) reserved1 \d \d\n(?s:([^UBX]*))`,
+			`\s+version \d nBlocks (\d) reserved1 \w+\n(?s:([^UBX]*))`,
 		// 1686916187.0584
 		// UBX-MON-RF:
 		//  version 0 nBlocks 2 reserved1 0 0
