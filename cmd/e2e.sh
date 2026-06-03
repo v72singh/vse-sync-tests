@@ -5,6 +5,9 @@
 set -e
 set -o pipefail
 
+git config --global --add safe.directory /usr/vse/vse-sync-test
+git config --global --add safe.directory /usr/vse/vse-sync-collection-tools
+
 
 TESTROOT=$(pwd)
 COLLECTORPATH=$TESTROOT/collection_tools
