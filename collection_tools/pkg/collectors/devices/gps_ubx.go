@@ -88,7 +88,7 @@ var (
 	ubxAntFullBlockRegex = regexp.MustCompile(
 		timeStampPattern +
 			`\nUBX-MON-RF:\n` +
-			`\s+version \d nBlocks (\d) reserved1 \w+\n(?s:([^UBX]*))`,
+			`\s+version \d+ nBlocks (\d+) reserved1 [^\n]+\n(?s:([^UBX]*))`,
 		// 1686916187.0584
 		// UBX-MON-RF:
 		//  version 0 nBlocks 2 reserved1 0 0
@@ -100,9 +100,9 @@ var (
 		//		reserved3 0 0 0
 	)
 	ubxAntInternalBlockRegex = regexp.MustCompile(
-		`\s+blockId (\d) flags \w+ antStatus (\d) antPower (\d+) postStatus \d reserved2 \d \d \d \d\n` +
+		`\s+(?:\d+: )?blockId (\d+) flags \S+ antStatus (\d+) antPower (\d+) postStatus \d+ reserved2 .*\n` +
 			`\s+noisePerMS \d+ agcCnt \d+ jamInd \d+ ofsI -?\d+ magI \d+ ofsQ -?\d+ magQ \d+\n` +
-			`\s+reserved3 \d \d \d\n?`,
+			`\s+reserved3 \d+ \d+ \d+\n?`,
 		// 	blockId 0 flags x0 antStatus 2 antPower 1 postStatus 0 reserved2 0 0 0 0
 		// 	noisePerMS 90 agcCnt 4914 jamInd 14 ofsI 15 magI 147 ofsQ 25 magQ 148
 		// 	reserved3 0 0 0

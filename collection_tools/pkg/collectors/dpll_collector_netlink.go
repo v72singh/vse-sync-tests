@@ -47,9 +47,9 @@ func (dpll *DPLLNetlinkCollector) Start() error {
 
 	log.Debug("clockIDStuct.ClockID: ", netlinkParams.ClockID)
 
-	err = devices.BuildDPLLNetlinkDeviceFetcher(netlinkParams)
+	err = devices.ValidateNetlinkDPLLSupported(dpll.ctx, netlinkParams)
 	if err != nil {
-		return fmt.Errorf("failed to build fetcher for DPLLNetlinkInfo %w", err)
+		return fmt.Errorf("dpll netlink collector not supported: %w", err)
 	}
 
 	dpll.params = netlinkParams
@@ -122,7 +122,8 @@ func NewDPLLNetlinkCollector(constructor *CollectionConstructor) (Collector, err
 	err = collector.Start()
 	if err != nil {
 		collector.CleanUp()
+		return nil, utils.NewRequirementsNotMetError(fmt.Errorf("dpll netlink collector unavailable: %w", err))
 	}
 
-	return collector, err
+	return collector, nil
 }
