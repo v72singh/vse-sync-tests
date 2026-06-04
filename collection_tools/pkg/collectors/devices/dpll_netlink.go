@@ -256,7 +256,7 @@ func discoverDevicesJSON(ctx clients.ExecContext) ([]byte, error) {
 	}
 
 	deviceDumpWarnOnce.Do(func() {
-		log.Warn("DPLL device-get dump unavailable, probing devices individually (once at setup)")
+		log.Debug("DPLL device-get dump unavailable on this kernel, probing devices individually (once at setup)")
 	})
 
 	return probeDevicesIndividually(ctx)
@@ -303,7 +303,7 @@ func discoverPinsJSON(ctx clients.ExecContext) ([]byte, error) {
 	}
 
 	pinDumpWarnOnce.Do(func() {
-		log.Warn("DPLL pin-get dump unavailable, probing pins individually (once at setup)")
+		log.Debug("DPLL pin-get dump unavailable on this kernel, probing pins individually (once at setup)")
 	})
 
 	return probePinsIndividually(ctx)
@@ -572,8 +572,10 @@ func logPTPSysfsPins(ctx clients.ExecContext, interfaceName string) {
 		return
 	}
 
-	log.Warnf("PTP PHC pins for %s (/sys/class/ptp/ptp%s/pins): %s",
-		interfaceName, ptpIndex, strings.ReplaceAll(strings.TrimSpace(out), "\n", "; "))
+	log.Infof(
+		"PHC programmable pins for %s (/sys/class/ptp/ptp%s/pins, not DPLL netlink pins): %s",
+		interfaceName, ptpIndex, strings.ReplaceAll(strings.TrimSpace(out), "\n", "; "),
+	)
 }
 
 func readSysfsDPLLState(ctx clients.ExecContext, interfaceName string, index int) (string, error) {
@@ -587,7 +589,7 @@ func readSysfsDPLLState(ctx clients.ExecContext, interfaceName string, index int
 	return strings.TrimSpace(stdout), nil
 }
 
-func pickLabeledPin(entries []*NetlinkPin, clockID uint64, matchClock bool, preferSMA1 bool) (int32, string, bool) {
+func pickLabeledPin(entries []*NetlinkPin, clockID uint64, matchClock bool, preferSMA1 bool) (int32, string, uint64, bool) {
 	var onePPSPin, sma1Pin *NetlinkPin
 
 	for _, pin := range entries {
@@ -626,28 +628,28 @@ func pickLabeledPin(entries []*NetlinkPin, clockID uint64, matchClock bool, pref
 
 	if preferSMA1 {
 		if chooseSMA1 {
-			return sma1Pin.ID, SMA1Label, true
+			return sma1Pin.ID, SMA1Label, sma1Pin.ClockID, true
 		}
 
 		if sma1Pin != nil {
-			return sma1Pin.ID, SMA1Label, true
+			return sma1Pin.ID, SMA1Label, sma1Pin.ClockID, true
 		}
 	}
 
 	if choosePPS {
-		return onePPSPin.ID, OnePPSLabel, true
+		return onePPSPin.ID, OnePPSLabel, onePPSPin.ClockID, true
 	}
 
 	if chooseSMA1 {
-		return sma1Pin.ID, SMA1Label, true
+		return sma1Pin.ID, SMA1Label, sma1Pin.ClockID, true
 	}
 
 	if onePPSPin != nil {
-		return onePPSPin.ID, OnePPSLabel, true
+		return onePPSPin.ID, OnePPSLabel, onePPSPin.ClockID, true
 	}
 
 	if sma1Pin != nil {
-		return sma1Pin.ID, SMA1Label, true
+		return sma1Pin.ID, SMA1Label, sma1Pin.ClockID, true
 	}
 
 	if matchClock {
@@ -661,38 +663,41 @@ func pickLabeledPin(entries []*NetlinkPin, clockID uint64, matchClock bool, pref
 				label = UnknownSubtype
 			}
 
-			return pin.ID, label, true
+			return pin.ID, label, pin.ClockID, true
 		}
 	}
 
-	return 0, "", false
+	return 0, "", 0, false
 }
 
-func selectPin(pinsJSON []byte, clockID uint64, preferSMA1 bool) (int32, string, error) {
+func selectPin(pinsJSON []byte, clockID uint64, preferSMA1 bool) (int32, string, uint64, error) {
 	entries := make([]*NetlinkPin, 0)
 
 	err := json.Unmarshal(pinsJSON, &entries)
 	if err != nil {
-		return 0, "", fmt.Errorf("failed to unmarshal netlink output: %s", err.Error())
+		return 0, "", 0, fmt.Errorf("failed to unmarshal netlink output: %s", err.Error())
 	}
 
 	if len(entries) == 0 {
-		return 0, "", utils.NewRequirementsNotMetError(errors.New("no pins found"))
+		return 0, "", 0, utils.NewRequirementsNotMetError(errors.New("no pins found"))
 	}
 
 	log.Debug("entries: ", entries)
 
-	if pinID, label, ok := pickLabeledPin(entries, clockID, true, preferSMA1); ok {
-		return pinID, label, nil
+	if pinID, label, pinClockID, ok := pickLabeledPin(entries, clockID, true, preferSMA1); ok {
+		return pinID, label, pinClockID, nil
 	}
 
-	if pinID, label, ok := pickLabeledPin(entries, clockID, false, preferSMA1); ok {
-		log.Warnf("No DPLL netlink pin for clock ID %d; using pin %d (%s) by board label", clockID, pinID, label)
+	if pinID, label, pinClockID, ok := pickLabeledPin(entries, clockID, false, preferSMA1); ok {
+		log.Infof(
+			"DPLL netlink: no pin for serial-derived clock ID %d on this port; using pin %d (%s, clock ID %d)",
+			clockID, pinID, label, pinClockID,
+		)
 
-		return pinID, label, nil
+		return pinID, label, pinClockID, nil
 	}
 
-	return 0, "", utils.NewRequirementsNotMetError(errors.New("failed to determine correct offset pin"))
+	return 0, "", 0, utils.NewRequirementsNotMetError(errors.New("failed to determine correct offset pin"))
 }
 
 func postProcessDPLLNetlinkClockID(result map[string]string) (map[string]any, error) {
@@ -747,7 +752,9 @@ func GetNetlinkParameters(ctx clients.ExecContext, interfaceName string, preferS
 		return netlinkInfo, fmt.Errorf("failed to discover dpll pins: %w", err)
 	}
 
-	offsetPinID, pinType, err := selectPin(pinsJSON, netlinkInfo.ClockID, preferSMA1)
+	serialClockID := netlinkInfo.ClockID
+
+	offsetPinID, pinType, pinClockID, err := selectPin(pinsJSON, serialClockID, preferSMA1)
 	if err != nil {
 		logPTPSysfsPins(ctx, interfaceName)
 		return netlinkInfo, err
@@ -755,6 +762,15 @@ func GetNetlinkParameters(ctx clients.ExecContext, interfaceName string, preferS
 
 	netlinkInfo.OffsetPin = offsetPinID
 	netlinkInfo.PinType = pinType
+
+	if pinClockID != 0 && pinClockID != serialClockID {
+		log.Debugf(
+			"DPLL device scope: clock ID %d from pin %d (%s) replaces serial-derived %d for %s",
+			pinClockID, offsetPinID, pinType, serialClockID, interfaceName,
+		)
+		logPTPSysfsPins(ctx, interfaceName)
+		netlinkInfo.ClockID = pinClockID
+	}
 
 	deviceIDs, err := resolveDeviceIDsForClock(ctx, netlinkInfo.ClockID)
 	if err != nil {

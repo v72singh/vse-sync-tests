@@ -39,6 +39,36 @@ func GetPTPDaemonContext(clientset *clients.Clientset, ptpNodeName string) (clie
 	return ctx, nil
 }
 
+func netlinkDebugPodLabels() map[string]string {
+	return map[string]string{
+		"app": "vse-sync-dpll-netlink-debug",
+		// openshift-ptp is often restricted; this pod needs privileged profile.
+		"pod-security.kubernetes.io/enforce": "privileged",
+		"pod-security.kubernetes.io/audit":   "privileged",
+		"pod-security.kubernetes.io/warn":    "privileged",
+	}
+}
+
+func netlinkDebugSecurityContext() *corev1.SecurityContext {
+	allowPrivEsc := false
+	return &corev1.SecurityContext{
+		AllowPrivilegeEscalation: &allowPrivEsc,
+		Capabilities: &corev1.Capabilities{
+			// Requires NET_ADMIN: having (NET_RAW + NET_BIND_SERVICE + NET_BROADCAST) does not work
+			//     Without NET_ADMIN it will not connect to the netlink interface
+			// Requires SYS_ADMIN: lspci needs it to expose Serial Number for clock ID derivation
+			Drop: []corev1.Capability{"ALL"},
+			Add: []corev1.Capability{
+				"SYS_ADMIN",
+				"NET_ADMIN",
+			},
+		},
+		SeccompProfile: &corev1.SeccompProfile{
+			Type: corev1.SeccompProfileTypeRuntimeDefault,
+		},
+	}
+}
+
 func GetNetlinkContext(
 	clientset *clients.Clientset,
 	ptpNodeName string,
@@ -52,20 +82,9 @@ func GetNetlinkContext(
 		NetlinkDebugPod,
 		NetlinkDebugContainer,
 		GetNetlinkDebugContainerImage(),
-		map[string]string{},
+		netlinkDebugPodLabels(),
 		[]string{"sleep", "inf"},
-		&corev1.SecurityContext{
-			Capabilities: &corev1.Capabilities{
-				// Requires NET_ADMIN: having (NET_RAW + NET_BIND_SERVICE + NET_BROADCAST) does not work
-				//     Without NET_ADMIN it will not connect to the netlink interface
-				// Requires SYS_AMDIN: having every other permission does not work.
-				//     Without SYS_ADMIN lspci does not include the Serial number in the comments thefore can not calculate the clockID
-				Add: []corev1.Capability{
-					"SYS_ADMIN",
-					"NET_ADMIN",
-				},
-			},
-		},
+		netlinkDebugSecurityContext(),
 		true,
 		[]*clients.Volume{
 			{

@@ -8,7 +8,6 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/openshift-kni/vse-sync-tests/collection_tools/pkg/callbacks"
-	"github.com/openshift-kni/vse-sync-tests/collection_tools/pkg/clients"
 	"github.com/openshift-kni/vse-sync-tests/collection_tools/pkg/collectors/contexts"
 	"github.com/openshift-kni/vse-sync-tests/collection_tools/pkg/collectors/devices"
 	"github.com/openshift-kni/vse-sync-tests/collection_tools/pkg/utils"
@@ -17,10 +16,9 @@ import (
 type DPLLNetlinkCollector struct {
 	*baseCollector
 
-	ctx               *clients.ContainerCreationExecContext
+	netlink           *contexts.NetlinkExec
 	interfaceName     string
 	params            devices.NetlinkParameters
-	unmanagedDebugPod bool
 	preferSMA1        bool
 }
 
@@ -33,22 +31,21 @@ const (
 func (dpll *DPLLNetlinkCollector) Start() error {
 	dpll.running = true
 
-	err := dpll.ctx.CreatePodAndWait()
+	err := dpll.netlink.Start()
 	if err != nil {
-		return fmt.Errorf("dpll netlink collector failed to start pod: %w", err)
+		return fmt.Errorf("dpll netlink collector failed to start: %w", err)
 	}
 
 	log.Debug("dpll.interfaceName: ", dpll.interfaceName)
-	log.Debug("dpll.ctx: ", dpll.ctx)
 
-	netlinkParams, err := devices.GetNetlinkParameters(dpll.ctx, dpll.interfaceName, dpll.preferSMA1)
+	netlinkParams, err := devices.GetNetlinkParameters(dpll.netlink.Exec, dpll.interfaceName, dpll.preferSMA1)
 	if err != nil {
 		return fmt.Errorf("dpll netlink collector failed to find clock id: %w", err)
 	}
 
 	log.Debug("clockIDStuct.ClockID: ", netlinkParams.ClockID)
 
-	err = devices.ValidateNetlinkDPLLSupported(dpll.ctx, netlinkParams)
+	err = devices.ValidateNetlinkDPLLSupported(dpll.netlink.Exec, netlinkParams)
 	if err != nil {
 		return fmt.Errorf("dpll netlink collector not supported: %w", err)
 	}
@@ -61,7 +58,7 @@ func (dpll *DPLLNetlinkCollector) Start() error {
 // polls for the dpll info then passes it to the callback
 func dpllNetlinkPoller(dpll *DPLLNetlinkCollector) func() (callbacks.OutputType, error) {
 	return func() (callbacks.OutputType, error) {
-		return devices.GetDevDPLLNetlinkInfo(dpll.ctx, dpll.params) //nolint:wrapcheck //no point wrapping this
+		return devices.GetDevDPLLNetlinkInfo(dpll.netlink.Exec, dpll.params) //nolint:wrapcheck //no point wrapping this
 	}
 }
 
@@ -87,7 +84,7 @@ func (dpll *DPLLNetlinkCollector) Poll(resultsChan chan PollResult, wg *utils.Wa
 func (dpll *DPLLNetlinkCollector) CleanUp() error {
 	dpll.running = false
 
-	err := dpll.ctx.DeletePodAndWait()
+	err := dpll.netlink.Stop()
 	if err != nil {
 		return fmt.Errorf("dpll netlink collector failed to clean up: %w", err)
 	}
@@ -97,7 +94,7 @@ func (dpll *DPLLNetlinkCollector) CleanUp() error {
 
 // Returns a new DPLLNetlinkCollector from the CollectionConstuctor Factory
 func NewDPLLNetlinkCollector(constructor *CollectionConstructor) (Collector, error) {
-	ctx, err := contexts.GetNetlinkContext(
+	netlinkExec, err := contexts.ResolveNetlinkExecContext(
 		constructor.Clientset,
 		constructor.PTPNodeName,
 		constructor.UnmanagedDebugPod,
@@ -114,10 +111,9 @@ func NewDPLLNetlinkCollector(constructor *CollectionConstructor) (Collector, err
 			DPLLNetlinkCollectorName,
 			DPLLNetlinkInfo,
 		),
-		interfaceName:     constructor.PTPInterface,
-		ctx:               ctx,
-		unmanagedDebugPod: constructor.UnmanagedDebugPod,
-		preferSMA1:        constructor.DPLLPreferSMA1,
+		interfaceName: constructor.PTPInterface,
+		netlink:       netlinkExec,
+		preferSMA1:    constructor.DPLLPreferSMA1,
 	}
 	collector.poller = dpllNetlinkPoller(collector)
 

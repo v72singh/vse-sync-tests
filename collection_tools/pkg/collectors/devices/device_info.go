@@ -133,8 +133,9 @@ func getGNSSSCommand(ctx clients.ExecContext, interfaceName string) (*clients.Cm
 	buf.WriteString(cmdStr)
 
 	stdout, _, err := ctx.ExecCommandStdIn([]string{"/usr/bin/sh"}, buf)
-	if err != nil || stdout == "" {
-		return nil, fmt.Errorf("command to find gnss devices: %w", err)
+	if err != nil || strings.TrimSpace(stdout) == "" {
+		log.Debugf("no GNSS device under /sys/class/net/%s/device/gnss (expected on non-GNSS NICs)", interfaceName)
+		return nil, nil
 	}
 
 	gnssCmd, err := clients.NewCmd("gnss", cmdStr)
@@ -156,8 +157,8 @@ func BuildPTPDeviceInfo(ctx clients.ExecContext, interfaceName string, clockType
 	if clockType == constants.ClockTypeGM {
 		gnssCmd, err := getGNSSSCommand(ctx, interfaceName)
 		if err != nil {
-			log.Warn(err)
-		} else {
+			log.Debug(err)
+		} else if gnssCmd != nil {
 			commands = append(commands, gnssCmd)
 		}
 	}
