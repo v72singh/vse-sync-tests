@@ -53,6 +53,57 @@ func normalizeDPLLState(state string) string {
 	return unknownDPLLState
 }
 
+func isLockedDPLLState(state string) bool {
+	normalized := normalizeDPLLState(state)
+	return normalized == "2" || normalized == "3"
+}
+
+func dpllDeviceTypeKey(clockType string, deviceID int) string {
+	clockType = strings.ToLower(strings.TrimSpace(clockType))
+
+	switch clockType {
+	case "eec", "synce":
+		return "eec"
+	case "pps", "phase", "phc", "1pps":
+		return "pps"
+	}
+
+	if clockType == "" {
+		switch deviceID {
+		case 0:
+			return "eec"
+		case 1:
+			return "pps"
+		default:
+			return ""
+		}
+	}
+
+	return clockType
+}
+
+func fillPPSDPLLState(dpllInfo *DevNetlinkDPLLInfo, ctx clients.ExecContext, interfaceName string) {
+	if normalizeDPLLState(dpllInfo.PPSState) != unknownDPLLState {
+		return
+	}
+
+	if fsState, err := readSysfsDPLLState(ctx, interfaceName, 1); err == nil && fsState != "" {
+		dpllInfo.PPSState = fsState
+		if normalizeDPLLState(dpllInfo.PPSState) != unknownDPLLState {
+			return
+		}
+	}
+
+	if isLockedDPLLState(dpllInfo.EECState) {
+		log.Debugf(
+			"PPS DPLL state unavailable via netlink/sysfs for %s; using EEC state %s",
+			interfaceName,
+			normalizeDPLLState(dpllInfo.EECState),
+		)
+		dpllInfo.PPSState = dpllInfo.EECState
+	}
+}
+
 const (
 	dpllYNLCLIPath     = "/linux/tools/net/ynl/cli.py"
 	dpllYNLSpecPath    = "/linux/Documentation/netlink/specs/dpll.yaml"
@@ -76,12 +127,13 @@ const (
 )
 
 type DevNetlinkDPLLInfo struct {
-	PinType   string
-	Timestamp string `fetcherKey:"date"       json:"timestamp"`
-	EECState  string `fetcherKey:"eec"        json:"eecstate"`
-	PPSState  string `fetcherKey:"pps"        json:"state"`
-	PPSOffset int64  `fetcherKey:"pps_offset" json:"terror"`
-	EECOffset int64  `fetcherKey:"eec_offset" json:"eecterror"`
+	PinType    string
+	PreferSMA1 bool
+	Timestamp  string `fetcherKey:"date"       json:"timestamp"`
+	EECState   string `fetcherKey:"eec"        json:"eecstate"`
+	PPSState   string `fetcherKey:"pps"        json:"state"`
+	PPSOffset  int64  `fetcherKey:"pps_offset" json:"terror"`
+	EECOffset  int64  `fetcherKey:"eec_offset" json:"eecterror"`
 }
 
 func convertNetlinkOffset(offset int64) float64 {
@@ -92,8 +144,13 @@ func convertNetlinkOffset(offset int64) float64 {
 // AnalyserJSON returns the json expected by the analysers
 func (dpllInfo *DevNetlinkDPLLInfo) GetAnalyserFormat() ([]*callbacks.AnalyserFormatType, error) {
 	subType := UnknownSubtype
+	pinLabel := dpllInfo.PinType
 
-	switch dpllInfo.PinType {
+	if dpllInfo.PreferSMA1 {
+		pinLabel = SMA1Label
+	}
+
+	switch pinLabel {
 	case OnePPSLabel:
 		subType = OnePPSSubtype
 	case SMA1Label:
@@ -394,17 +451,10 @@ func collectDPLLNetlinkSample(ctx clients.ExecContext, params NetlinkParameters)
 			state = "-1"
 		}
 
-		clockType := strings.ToLower(strings.TrimSpace(entry.ClockType))
+		clockType := dpllDeviceTypeKey(entry.ClockType, deviceID)
 		if clockType == "" {
-			switch deviceID {
-			case 0:
-				clockType = "eec"
-			case 1:
-				clockType = "pps"
-			default:
-				log.Debugf("skipping DPLL device %d with empty type", deviceID)
-				continue
-			}
+			log.Debugf("skipping DPLL device %d with unmapped type %q", deviceID, entry.ClockType)
+			continue
 		}
 
 		processedResult[clockType] = state
@@ -458,7 +508,10 @@ func ValidateNetlinkDPLLSupported(ctx clients.ExecContext, params NetlinkParamet
 
 // GetDevDPLLNetlinkInfo returns the device DPLL info for an interface.
 func GetDevDPLLNetlinkInfo(ctx clients.ExecContext, params NetlinkParameters) (*DevNetlinkDPLLInfo, error) {
-	dpllInfo := &DevNetlinkDPLLInfo{PinType: params.PinType}
+	dpllInfo := &DevNetlinkDPLLInfo{
+		PinType:    params.PinType,
+		PreferSMA1: params.PreferSMA1,
+	}
 
 	timestamp, err := runTimestamp(ctx)
 	if err != nil {
@@ -480,11 +533,7 @@ func GetDevDPLLNetlinkInfo(ctx clients.ExecContext, params NetlinkParameters) (*
 		dpllInfo.PPSState = ppsState
 	}
 
-	if normalizeDPLLState(dpllInfo.PPSState) == unknownDPLLState {
-		if fsState, err := readSysfsDPLLState(ctx, params.InterfaceName, 1); err == nil && fsState != "" {
-			dpllInfo.PPSState = fsState
-		}
-	}
+	fillPPSDPLLState(dpllInfo, ctx, params.InterfaceName)
 
 	if ppsOffset, ok := processed["pps_offset"].(int64); ok {
 		dpllInfo.PPSOffset = ppsOffset

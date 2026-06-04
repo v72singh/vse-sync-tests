@@ -59,7 +59,7 @@ var _ = Describe("NewContainerContext", func() {
 
 			ctx, err := clients.NewContainerContext(clientset, "TestNamespace", "Test", "TestContainer", "TestNodeName")
 			Expect(err).NotTo(HaveOccurred())
-			info, err := devices.GetDevDPLLFilesystemInfo(ctx, "aFakeInterface")
+			info, err := devices.GetDevDPLLFilesystemInfo(ctx, "aFakeInterface", false)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(info.Timestamp).To(Equal("2023-06-16T11:49:47.0584Z"))
 			Expect(info.EECState).To(Equal(eecState))

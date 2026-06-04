@@ -16,6 +16,7 @@ type DPLLFilesystemCollector struct {
 
 	ctx           clients.ExecContext
 	interfaceName string
+	preferSMA1    bool
 }
 
 const (
@@ -26,7 +27,7 @@ const (
 // polls for the dpll info then passes it to the callback
 func dpllFSPoller(dpll *DPLLFilesystemCollector) func() (callbacks.OutputType, error) {
 	return func() (callbacks.OutputType, error) {
-		return devices.GetDevDPLLFilesystemInfo(dpll.ctx, dpll.interfaceName) //nolint:wrapcheck //no point wrapping this
+		return devices.GetDevDPLLFilesystemInfo(dpll.ctx, dpll.interfaceName, dpll.preferSMA1) //nolint:wrapcheck //no point wrapping this
 	}
 }
 
@@ -52,6 +53,7 @@ func NewDPLLFilesystemCollector(constructor *CollectionConstructor) (Collector, 
 		),
 		interfaceName: constructor.PTPInterface,
 		ctx:           ctx,
+		preferSMA1:    constructor.DPLLPreferSMA1,
 	}
 	collector.poller = dpllFSPoller(collector)
 
