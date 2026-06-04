@@ -1,0 +1,7 @@
+include::../vars/render-vars.adoc[]
+
+:toc-title: Table of Contents
+
+= {subject}
+
+toc::[]

@@ -7,15 +7,39 @@ from collections import namedtuple
 from decimal import Decimal
 import math
 
+from pandas import DataFrame
+
+from vse_sync_pp.analyzers.analyzer import Config
 from vse_sync_pp.analyzers.phc2sys import (
     TimeErrorAnalyzer,
     TimeDeviationAnalyzer,
-    MaxTimeIntervalErrorAnalyzer
+    MaxTimeIntervalErrorAnalyzer,
+    phc2sys_time_error_diagnostics,
 )
 
 from .test_analyzer import AnalyzerTestBuilder
 
 TERR = namedtuple('TERR', ('timestamp', 'terror', 'state', 'delay'))
+
+
+def phc_time_error_diagnostics(rows, limit_pct, transient_s, requirements='workload/RAN'):
+    """Expected diagnostics for PHC-to-SYS time-error analyzer tests."""
+    config = Config(None, requirements, {
+        'time-error-limit/%': limit_pct,
+        'transient-period/s': transient_s,
+        'min-test-duration/s': 1,
+    })
+    analyzer = TimeErrorAnalyzer(config)
+    columns, records = analyzer.prepare(rows)
+    if not records:
+        return {}
+    data = DataFrame.from_records(records, columns=columns)
+    return phc2sys_time_error_diagnostics(
+        data,
+        analyzer._unacceptable,  # pylint: disable=protected-access
+        analyzer.locked,
+        analyzer._transient,  # pylint: disable=protected-access
+    )
 
 
 class TestTimeErrorAnalyzer(TestCase, metaclass=AnalyzerTestBuilder):
@@ -80,6 +104,18 @@ class TestTimeErrorAnalyzer(TestCase, metaclass=AnalyzerTestBuilder):
             'timestamp': Decimal(1),
             'duration': Decimal(4),
             'analysis': {
+                'diagnostics': phc_time_error_diagnostics(
+                    (
+                        TERR(Decimal(0), 0, 's2', 620),
+                        TERR(Decimal(1), 0, 's1', 620),
+                        TERR(Decimal(2), 0, 's2', 620),
+                        TERR(Decimal(3), 0, 's2', 620),
+                        TERR(Decimal(4), 0, 's2', 620),
+                        TERR(Decimal(5), 0, 's2', 620),
+                    ),
+                    100,
+                    1,
+                ),
                 'terror': {
                     'units': 'ns',
                     'min': 0,
@@ -112,6 +148,18 @@ class TestTimeErrorAnalyzer(TestCase, metaclass=AnalyzerTestBuilder):
             'timestamp': Decimal(1),
             'duration': Decimal(4),
             'analysis': {
+                'diagnostics': phc_time_error_diagnostics(
+                    (
+                        TERR(Decimal(0), 0, 's2', 620),
+                        TERR(Decimal(1), 0, 's2', 620),
+                        TERR(Decimal(2), 0, 's2', 620),
+                        TERR(Decimal(3), 10, 's2', 620),
+                        TERR(Decimal(4), 0, 's2', 620),
+                        TERR(Decimal(5), 0, 's2', 620),
+                    ),
+                    10,
+                    1,
+                ),
                 'terror': {
                     'units': 'ns',
                     'min': 0,
@@ -143,6 +191,17 @@ class TestTimeErrorAnalyzer(TestCase, metaclass=AnalyzerTestBuilder):
             'timestamp': Decimal(1),
             'duration': Decimal(3),
             'analysis': {
+                'diagnostics': phc_time_error_diagnostics(
+                    (
+                        TERR(Decimal(0), 0, 's2', 620),
+                        TERR(Decimal(1), 0, 's2', 620),
+                        TERR(Decimal(2), 0, 's2', 620),
+                        TERR(Decimal(3), 0, 's2', 620),
+                        TERR(Decimal(4), 0, 's2', 620),
+                    ),
+                    100,
+                    1,
+                ),
                 'terror': {
                     'units': 'ns',
                     'min': 0,
@@ -174,6 +233,17 @@ class TestTimeErrorAnalyzer(TestCase, metaclass=AnalyzerTestBuilder):
             'timestamp': Decimal(1),
             'duration': Decimal(4),
             'analysis': {
+                'diagnostics': phc_time_error_diagnostics(
+                    (
+                        TERR(Decimal(0), 0, 's2', 620),
+                        TERR(Decimal(1), 0, 's2', 620),
+                        TERR(Decimal(2), 0, 's2', 620),
+                        TERR(Decimal(3), 0, 's2', 620),
+                        TERR(Decimal(5), 0, 's2', 620),
+                    ),
+                    100,
+                    1,
+                ),
                 'terror': {
                     'units': 'ns',
                     'min': 0,
@@ -206,6 +276,18 @@ class TestTimeErrorAnalyzer(TestCase, metaclass=AnalyzerTestBuilder):
             'timestamp': Decimal(1),
             'duration': Decimal(5),
             'analysis': {
+                'diagnostics': phc_time_error_diagnostics(
+                    (
+                        TERR(Decimal(0), 0, 's2', 620),
+                        TERR(Decimal(1), 0, 's2', 620),
+                        TERR(Decimal(2), 0, 's2', 620),
+                        TERR(Decimal(3), 0, 's2', 620),
+                        TERR(Decimal(5), 0, 's2', 620),
+                        TERR(Decimal(6), 0, 's2', 620),
+                    ),
+                    100,
+                    1,
+                ),
                 'terror': {
                     'units': 'ns',
                     'min': 0,
@@ -237,6 +319,18 @@ class TestTimeErrorAnalyzer(TestCase, metaclass=AnalyzerTestBuilder):
             'timestamp': Decimal(1),
             'duration': Decimal(4),
             'analysis': {
+                'diagnostics': phc_time_error_diagnostics(
+                    (
+                        TERR(Decimal(0), 0, 's1', 620),
+                        TERR(Decimal(1), 0, 's2', 620),
+                        TERR(Decimal(2), 0, 's2', 620),
+                        TERR(Decimal(3), 0, 's2', 620),
+                        TERR(Decimal(4), 0, 's2', 620),
+                        TERR(Decimal(5), 0, 's2', 620),
+                    ),
+                    100,
+                    1,
+                ),
                 'terror': {
                     'units': 'ns',
                     'min': 0,

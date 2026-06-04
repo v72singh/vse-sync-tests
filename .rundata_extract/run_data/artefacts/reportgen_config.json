@@ -1,0 +1,21 @@
+{
+    "title": "Synchronization Test Report",
+    "subtitle": "T-GM with GNSS",
+    "repositories": {
+        "vse-sync-test.git": "/usr/vse/tests/"
+    },
+    "suites": {
+        "Environment": {
+            "repository": "vse-sync-test.git",
+            "baseurl": "https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/"
+        },
+        "T-GM Tests": {
+            "repository": "vse-sync-test.git",
+            "baseurl": "https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/"
+        },
+        "T-BC/T-TSC Tests": {
+            "repository": "vse-sync-test.git",
+            "baseurl": "https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/"
+        }
+    }
+}

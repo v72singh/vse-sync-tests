@@ -1,0 +1,23 @@
+{
+    "collection_tools":     {
+        "path": "/usr/vse/collection_tools",
+        "commit": "c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c",
+        "branch": "dpllfix",
+        "status": "?? ../data/
+?? ../kubeconfig"
+    },
+    "tests":     {
+        "path": "/usr/vse",
+        "commit": "c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c",
+        "branch": "dpllfix",
+        "status": "?? data/
+?? kubeconfig"
+    },
+    "reporting":     {
+        "path": "/usr/vse/reporting",
+        "commit": "c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c",
+        "branch": "dpllfix",
+        "status": "?? ../data/
+?? ../kubeconfig"
+    }
+}

@@ -1,0 +1,17 @@
+[
+  {
+    "name": "ens3f0",
+    "ptp_dev": "/dev/ptp0",
+    "primary": true
+  },
+  {
+    "name": "ens1f0",
+    "ptp_dev": "/dev/ptp1",
+    "primary": false
+  },
+  {
+    "name": "ens2f0",
+    "ptp_dev": "/dev/ptp2",
+    "primary": false
+  }
+]

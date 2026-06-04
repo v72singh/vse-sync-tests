@@ -20,12 +20,15 @@ import (
 )
 
 var states = map[string]string{
-	"unknown":       "-1",
-	"invalid":       "0",
-	"freerun":       "1",
-	"locked":        "2",
-	"locked-ho-acq": "3",
-	"holdover":      "4",
+	"unknown":              "-1",
+	"invalid":              "0",
+	"freerun":              "1",
+	"locked":               "2",
+	"locked-ho-acq":        "3",
+	"locked_ho_acq":        "3",
+	"DPLL_LOCKED_HO_ACQ":   "3",
+	"DPLL_LOCKED":          "2",
+	"holdover":             "4",
 }
 
 const unknownDPLLState = "-1"
@@ -385,17 +388,26 @@ func collectDPLLNetlinkSample(ctx clients.ExecContext, params NetlinkParameters)
 			continue
 		}
 
-		if entry.ClockID != params.ClockID {
-			continue
-		}
-
 		state, ok := states[entry.LockStatus]
 		if !ok {
-			log.Errorf("Unknown state: %s", entry.LockStatus)
+			log.Debugf("Unknown DPLL lock-status %q for device %d", entry.LockStatus, deviceID)
 			state = "-1"
 		}
 
-		processedResult[entry.ClockType] = state
+		clockType := strings.ToLower(strings.TrimSpace(entry.ClockType))
+		if clockType == "" {
+			switch deviceID {
+			case 0:
+				clockType = "eec"
+			case 1:
+				clockType = "pps"
+			default:
+				log.Debugf("skipping DPLL device %d with empty type", deviceID)
+				continue
+			}
+		}
+
+		processedResult[clockType] = state
 	}
 
 	pinOut, err := runDPLLYNLCommand(ctx, fmt.Sprintf("--do pin-get --json '{\"id\": %d}' --output-json", params.OffsetPin))
@@ -466,6 +478,12 @@ func GetDevDPLLNetlinkInfo(ctx clients.ExecContext, params NetlinkParameters) (*
 
 	if ppsState, ok := processed["pps"].(string); ok {
 		dpllInfo.PPSState = ppsState
+	}
+
+	if normalizeDPLLState(dpllInfo.PPSState) == unknownDPLLState {
+		if fsState, err := readSysfsDPLLState(ctx, params.InterfaceName, 1); err == nil && fsState != "" {
+			dpllInfo.PPSState = fsState
+		}
 	}
 
 	if ppsOffset, ok := processed["pps_offset"].(int64); ok {
@@ -558,7 +576,18 @@ func logPTPSysfsPins(ctx clients.ExecContext, interfaceName string) {
 		interfaceName, ptpIndex, strings.ReplaceAll(strings.TrimSpace(out), "\n", "; "))
 }
 
-func pickLabeledPin(entries []*NetlinkPin, clockID uint64, matchClock bool) (int32, string, bool) {
+func readSysfsDPLLState(ctx clients.ExecContext, interfaceName string, index int) (string, error) {
+	command := fmt.Sprintf("cat /sys/class/net/%s/device/dpll_%d_state", interfaceName, index)
+
+	stdout, _, err := ctx.ExecCommand([]string{"/usr/bin/sh", "-c", command})
+	if err != nil {
+		return "", err
+	}
+
+	return strings.TrimSpace(stdout), nil
+}
+
+func pickLabeledPin(entries []*NetlinkPin, clockID uint64, matchClock bool, preferSMA1 bool) (int32, string, bool) {
 	var onePPSPin, sma1Pin *NetlinkPin
 
 	for _, pin := range entries {
@@ -575,6 +604,7 @@ func pickLabeledPin(entries []*NetlinkPin, clockID uint64, matchClock bool) (int
 	}
 
 	choosePPS := onePPSPin != nil
+	chooseSMA1 := sma1Pin != nil
 
 	if choosePPS {
 		for _, parentDev := range onePPSPin.ParentDevices {
@@ -585,14 +615,22 @@ func pickLabeledPin(entries []*NetlinkPin, clockID uint64, matchClock bool) (int
 		}
 	}
 
-	chooseSMA1 := sma1Pin != nil
-
 	if chooseSMA1 {
 		for _, parentDev := range sma1Pin.ParentDevices {
 			if parentDev.Direction != InputDirection || parentDev.State != ConnectedState {
 				chooseSMA1 = false
 				break
 			}
+		}
+	}
+
+	if preferSMA1 {
+		if chooseSMA1 {
+			return sma1Pin.ID, SMA1Label, true
+		}
+
+		if sma1Pin != nil {
+			return sma1Pin.ID, SMA1Label, true
 		}
 	}
 
@@ -630,7 +668,7 @@ func pickLabeledPin(entries []*NetlinkPin, clockID uint64, matchClock bool) (int
 	return 0, "", false
 }
 
-func selectPin(pinsJSON []byte, clockID uint64) (int32, string, error) {
+func selectPin(pinsJSON []byte, clockID uint64, preferSMA1 bool) (int32, string, error) {
 	entries := make([]*NetlinkPin, 0)
 
 	err := json.Unmarshal(pinsJSON, &entries)
@@ -644,11 +682,11 @@ func selectPin(pinsJSON []byte, clockID uint64) (int32, string, error) {
 
 	log.Debug("entries: ", entries)
 
-	if pinID, label, ok := pickLabeledPin(entries, clockID, true); ok {
+	if pinID, label, ok := pickLabeledPin(entries, clockID, true, preferSMA1); ok {
 		return pinID, label, nil
 	}
 
-	if pinID, label, ok := pickLabeledPin(entries, clockID, false); ok {
+	if pinID, label, ok := pickLabeledPin(entries, clockID, false, preferSMA1); ok {
 		log.Warnf("No DPLL netlink pin for clock ID %d; using pin %d (%s) by board label", clockID, pinID, label)
 
 		return pinID, label, nil
@@ -671,15 +709,20 @@ func postProcessDPLLNetlinkClockID(result map[string]string) (map[string]any, er
 }
 
 type NetlinkParameters struct {
-	Timestamp  string `fetcherKey:"date"      json:"timestamp"`
-	PinType    string `fetcherKey:"pinType"   json:"pinType"`
-	ClockID    uint64 `fetcherKey:"clockID"   json:"clockId"`
-	OffsetPin  int32  `fetcherKey:"offsetPin" json:"offsetPin"`
-	DeviceIDs  []int  `json:"deviceIds"`
+	Timestamp     string `fetcherKey:"date"      json:"timestamp"`
+	PinType       string `fetcherKey:"pinType"   json:"pinType"`
+	ClockID       uint64 `fetcherKey:"clockID"   json:"clockId"`
+	OffsetPin     int32  `fetcherKey:"offsetPin" json:"offsetPin"`
+	DeviceIDs     []int  `json:"deviceIds"`
+	InterfaceName string `json:"interfaceName"`
+	PreferSMA1    bool   `json:"preferSma1"`
 }
 
-func GetNetlinkParameters(ctx clients.ExecContext, interfaceName string) (NetlinkParameters, error) {
-	netlinkInfo := NetlinkParameters{}
+func GetNetlinkParameters(ctx clients.ExecContext, interfaceName string, preferSMA1 bool) (NetlinkParameters, error) {
+	netlinkInfo := NetlinkParameters{
+		InterfaceName: interfaceName,
+		PreferSMA1:    preferSMA1,
+	}
 
 	fetcherInst, fetchedInstanceOk := dpllClockIDFetcher[interfaceName]
 	if !fetchedInstanceOk {
@@ -704,7 +747,7 @@ func GetNetlinkParameters(ctx clients.ExecContext, interfaceName string) (Netlin
 		return netlinkInfo, fmt.Errorf("failed to discover dpll pins: %w", err)
 	}
 
-	offsetPinID, pinType, err := selectPin(pinsJSON, netlinkInfo.ClockID)
+	offsetPinID, pinType, err := selectPin(pinsJSON, netlinkInfo.ClockID, preferSMA1)
 	if err != nil {
 		logPTPSysfsPins(ctx, interfaceName)
 		return netlinkInfo, err

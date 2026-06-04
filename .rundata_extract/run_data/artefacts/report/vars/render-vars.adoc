@@ -1,0 +1,29 @@
+// --------------------------------
+// Document/Brand Configuration
+// Do Not Change
+// --------------------------------
+:doctype: book
+:listing-caption: Listing
+:toc: macro
+:toclevels: 3
+:sectnumlevels: 6
+:numbered:
+:chapter-label:
+:icons: image
+:pdf-page-size: A4
+:pdf-theme: redhat
+:pdf-themesdir: pdf-assets
+:iconsdir: pdf-assets/icons/
+:icontype: svg
+:imagesdir: pdf-assets/images/
+
+ifdef::backend-pdf[]
+:pygments-style: tango
+:source-highlighter: rouge
+:rouge-style: github
+:autofit-option:
+endif::[]
+
+
+// :experimental: true
+:included_cer_Base: true

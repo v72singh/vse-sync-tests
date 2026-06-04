@@ -21,6 +21,7 @@ type DPLLNetlinkCollector struct {
 	interfaceName     string
 	params            devices.NetlinkParameters
 	unmanagedDebugPod bool
+	preferSMA1        bool
 }
 
 const (
@@ -40,7 +41,7 @@ func (dpll *DPLLNetlinkCollector) Start() error {
 	log.Debug("dpll.interfaceName: ", dpll.interfaceName)
 	log.Debug("dpll.ctx: ", dpll.ctx)
 
-	netlinkParams, err := devices.GetNetlinkParameters(dpll.ctx, dpll.interfaceName)
+	netlinkParams, err := devices.GetNetlinkParameters(dpll.ctx, dpll.interfaceName, dpll.preferSMA1)
 	if err != nil {
 		return fmt.Errorf("dpll netlink collector failed to find clock id: %w", err)
 	}
@@ -116,6 +117,7 @@ func NewDPLLNetlinkCollector(constructor *CollectionConstructor) (Collector, err
 		interfaceName:     constructor.PTPInterface,
 		ctx:               ctx,
 		unmanagedDebugPod: constructor.UnmanagedDebugPod,
+		preferSMA1:        constructor.DPLLPreferSMA1,
 	}
 	collector.poller = dpllNetlinkPoller(collector)
 

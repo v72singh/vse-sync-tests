@@ -34,6 +34,7 @@ type CollectionConstructor struct {
 	IncludeLogTimestamps   bool
 	KeepDebugFiles         bool
 	UnmanagedDebugPod      bool
+	DPLLPreferSMA1         bool
 }
 
 func NewCollectionConstructor(
@@ -50,6 +51,7 @@ func NewCollectionConstructor(
 	keepDebugFiles bool,
 	unmanagedDebugPod bool,
 	clockType string,
+	dpllPreferSMA1 bool,
 ) (*CollectionConstructor, error) {
 	clientset, err := clients.GetClientset(kubeConfig)
 	if err != nil {
@@ -79,6 +81,7 @@ func NewCollectionConstructor(
 		KeepDebugFiles:         keepDebugFiles,
 		UnmanagedDebugPod:      unmanagedDebugPod,
 		ClockType:              clockType,
+		DPLLPreferSMA1:         dpllPreferSMA1,
 	}, nil
 }
 

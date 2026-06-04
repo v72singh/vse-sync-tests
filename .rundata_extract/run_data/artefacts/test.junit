@@ -1,0 +1,1424 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites tests="44" errors="12" failures="7" skipped="0">
+  <testsuite name="T-GM Tests" tests="44" errors="12" failures="7" skipped="0" hostname="api-ptp-samsung-ran-lab" timestamp="2026-06-03T15:58:30+00:00" time="1980.515606">
+    <testcase classname="T-GM Tests" name="Verify time error on path of PHC to system clock in locked condition RAN" time="1682.908">
+      <failure type="Failure" message="unacceptable time error" />
+      <system-out>{
+    "analysis": {
+        "terror": {
+            "max": 1102,
+            "mean": 0.0,
+            "min": -1701,
+            "range": 2803,
+            "stddev": 36.124,
+            "units": "ns",
+            "variance": 1304.955
+        }
+    },
+    "argv": [
+        "/usr/vse/data/collected/linuxptp-daemon-container.log"
+    ],
+    "duration": 1682.908,
+    "pdf_display_name": "Verify time error on path of PHC to system clock in locked condition RAN",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_time-error-in-locked-mode_PHC-to-SYS_RAN_testimpl.png",
+            "title": "PHC-to-SYS Time Error (unfiltered)"
+        }
+    ],
+    "reason": "unacceptable time error",
+    "result": false,
+    "timestamp": 26423.901
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify time error on path of PHC to system clock in locked condition RAN" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/time-error-in-locked-mode/PHC-to-SYS/RAN/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/time-error-in-locked-mode/PHC-to-SYS/RAN/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify time error on path of constellation to GNSS receiver in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references))" time="1680.9903">
+      <system-out>{
+    "analysis": {
+        "terror": {
+            "max": 3,
+            "mean": 3.0,
+            "min": 3,
+            "range": 0,
+            "stddev": 0.0,
+            "units": "ns",
+            "variance": 0.0
+        }
+    },
+    "argv": [
+        "/usr/vse/data/artefacts/gnss-terror.demuxed"
+    ],
+    "duration": 1680.9903,
+    "pdf_display_name": "Verify time error on path of constellation to GNSS receiver in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references))",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_time-error-in-locked-mode_Constellation-to-GNSS-receiver_PRTC-A_testimpl.png",
+            "title": "Constellation-to-GNSS-receiver Time Error (unfiltered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": "2026-06-03T16:03:32+00:00"
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify time error on path of constellation to GNSS receiver in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references))" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/time-error-in-locked-mode/Constellation-to-GNSS-receiver/PRTC-A/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/time-error-in-locked-mode/Constellation-to-GNSS-receiver/PRTC-A/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify time error on path of constellation to GNSS receiver in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references))" time="1680.9903">
+      <system-out>{
+    "analysis": {
+        "terror": {
+            "max": 3,
+            "mean": 3.0,
+            "min": 3,
+            "range": 0,
+            "stddev": 0.0,
+            "units": "ns",
+            "variance": 0.0
+        }
+    },
+    "argv": [
+        "/usr/vse/data/artefacts/gnss-terror.demuxed"
+    ],
+    "duration": 1680.9903,
+    "pdf_display_name": "Verify time error on path of constellation to GNSS receiver in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references))",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_time-error-in-locked-mode_Constellation-to-GNSS-receiver_PRTC-B_testimpl.png",
+            "title": "Constellation-to-GNSS-receiver Time Error (unfiltered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": "2026-06-03T16:03:32+00:00"
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify time error on path of constellation to GNSS receiver in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references))" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/time-error-in-locked-mode/Constellation-to-GNSS-receiver/PRTC-B/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/time-error-in-locked-mode/Constellation-to-GNSS-receiver/PRTC-B/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify TDEV (Time Deviation in locked mode) on path of constellation to GNSS receiver in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references))" time="1680.9903">
+      <system-out>{
+    "analysis": {
+        "tdev": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "range": 0.0,
+            "stddev": 0.0,
+            "units": "ns",
+            "variance": 0.0
+        }
+    },
+    "argv": [
+        "/usr/vse/data/artefacts/gnss-terror.demuxed"
+    ],
+    "duration": 1680.9903,
+    "pdf_display_name": "Verify TDEV (Time Deviation in locked mode) on path of constellation to GNSS receiver in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references))",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_wander-TDEV-in-locked-mode_Constellation-to-GNSS-receiver_PRTC-A_testimpl.png",
+            "title": "Constellation-to-GNSS-receiver TDEV (filtered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": "2026-06-03T16:03:32+00:00"
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify TDEV (Time Deviation in locked mode) on path of constellation to GNSS receiver in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references))" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-TDEV-in-locked-mode/Constellation-to-GNSS-receiver/PRTC-A/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-TDEV-in-locked-mode/Constellation-to-GNSS-receiver/PRTC-A/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify TDEV (Time Deviation in locked mode) on path of constellation to GNSS receiver in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references))" time="1680.9903">
+      <system-out>{
+    "analysis": {
+        "tdev": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "range": 0.0,
+            "stddev": 0.0,
+            "units": "ns",
+            "variance": 0.0
+        }
+    },
+    "argv": [
+        "/usr/vse/data/artefacts/gnss-terror.demuxed"
+    ],
+    "duration": 1680.9903,
+    "pdf_display_name": "Verify TDEV (Time Deviation in locked mode) on path of constellation to GNSS receiver in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references))",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_wander-TDEV-in-locked-mode_Constellation-to-GNSS-receiver_PRTC-B_testimpl.png",
+            "title": "Constellation-to-GNSS-receiver TDEV (filtered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": "2026-06-03T16:03:32+00:00"
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify TDEV (Time Deviation in locked mode) on path of constellation to GNSS receiver in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references))" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-TDEV-in-locked-mode/Constellation-to-GNSS-receiver/PRTC-B/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-TDEV-in-locked-mode/Constellation-to-GNSS-receiver/PRTC-B/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify MTIE (Maximum Time Interval Error) on path of constellation to GNSS receiver in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) with a 0.1 Hz low-pass filter" time="1680.9903">
+      <system-out>{
+    "analysis": {
+        "mtie": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "range": 0.0,
+            "stddev": 0.0,
+            "units": "ns",
+            "variance": 0.0
+        }
+    },
+    "argv": [
+        "/usr/vse/data/artefacts/gnss-terror.demuxed"
+    ],
+    "duration": 1680.9903,
+    "pdf_display_name": "Verify MTIE (Maximum Time Interval Error) on path of constellation to GNSS receiver in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) with a 0.1 Hz low-pass filter",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_wander-MTIE-in-locked-mode_Constellation-to-GNSS-receiver_PRTC-A_testimpl.png",
+            "title": "Constellation-to-GNSS-receiver MTIE (filtered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": "2026-06-03T16:03:32+00:00"
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify MTIE (Maximum Time Interval Error) on path of constellation to GNSS receiver in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) with a 0.1 Hz low-pass filter" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-MTIE-in-locked-mode/Constellation-to-GNSS-receiver/PRTC-A/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-MTIE-in-locked-mode/Constellation-to-GNSS-receiver/PRTC-A/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify MTIE (Maximum Time Interval Error) on path of constellation to GNSS receiver in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) with a 0.1 Hz low-pass filter" time="1680.9903">
+      <system-out>{
+    "analysis": {
+        "mtie": {
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "range": 0.0,
+            "stddev": 0.0,
+            "units": "ns",
+            "variance": 0.0
+        }
+    },
+    "argv": [
+        "/usr/vse/data/artefacts/gnss-terror.demuxed"
+    ],
+    "duration": 1680.9903,
+    "pdf_display_name": "Verify MTIE (Maximum Time Interval Error) on path of constellation to GNSS receiver in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) with a 0.1 Hz low-pass filter",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_wander-MTIE-in-locked-mode_Constellation-to-GNSS-receiver_PRTC-B_testimpl.png",
+            "title": "Constellation-to-GNSS-receiver MTIE (filtered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": "2026-06-03T16:03:32+00:00"
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify MTIE (Maximum Time Interval Error) on path of constellation to GNSS receiver in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) with a 0.1 Hz low-pass filter" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-MTIE-in-locked-mode/Constellation-to-GNSS-receiver/PRTC-B/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-MTIE-in-locked-mode/Constellation-to-GNSS-receiver/PRTC-B/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify time error on path of 1PPS input to 1PPS output of DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references))" time="1660.5156057">
+      <failure type="Failure" message="loss of lock" />
+      <system-out>{
+    "analysis": {
+        "terror": {
+            "max": 6.773,
+            "mean": -0.021,
+            "min": -5.788,
+            "range": 12.561,
+            "stddev": 2.381,
+            "units": "ns",
+            "variance": 5.67
+        }
+    },
+    "argv": [
+        "/usr/vse/data/artefacts/dpll-terror.demuxed"
+    ],
+    "duration": 1660.5156057,
+    "pdf_display_name": "Verify time error on path of 1PPS input to 1PPS output of DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references))",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_time-error-in-locked-mode_1PPS-to-DPLL_PRTC-A_testimpl.png",
+            "title": "1PPS-to-DPLL Time Error (unfiltered)"
+        }
+    ],
+    "reason": "loss of lock",
+    "result": false,
+    "timestamp": "2026-06-03T16:03:50+00:00"
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify time error on path of 1PPS input to 1PPS output of DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references))" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/time-error-in-locked-mode/1PPS-to-DPLL/PRTC-A/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/time-error-in-locked-mode/1PPS-to-DPLL/PRTC-A/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify time error on path of 1PPS input to 1PPS output of DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references))" time="1660.5156057">
+      <failure type="Failure" message="loss of lock" />
+      <system-out>{
+    "analysis": {
+        "terror": {
+            "max": 6.773,
+            "mean": -0.021,
+            "min": -5.788,
+            "range": 12.561,
+            "stddev": 2.381,
+            "units": "ns",
+            "variance": 5.67
+        }
+    },
+    "argv": [
+        "/usr/vse/data/artefacts/dpll-terror.demuxed"
+    ],
+    "duration": 1660.5156057,
+    "pdf_display_name": "Verify time error on path of 1PPS input to 1PPS output of DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references))",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_time-error-in-locked-mode_1PPS-to-DPLL_PRTC-B_testimpl.png",
+            "title": "1PPS-to-DPLL Time Error (unfiltered)"
+        }
+    ],
+    "reason": "loss of lock",
+    "result": false,
+    "timestamp": "2026-06-03T16:03:50+00:00"
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify time error on path of 1PPS input to 1PPS output of DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references))" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/time-error-in-locked-mode/1PPS-to-DPLL/PRTC-B/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/time-error-in-locked-mode/1PPS-to-DPLL/PRTC-B/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify TDEV (Time Deviation in locked mode) on path of 1PPS input to 1PPS output of DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references))" time="1660.5156057">
+      <failure type="Failure" message="loss of lock" />
+      <system-out>{
+    "analysis": {
+        "tdev": {
+            "max": 0.684,
+            "mean": 0.375,
+            "min": 0.08,
+            "range": 0.604,
+            "stddev": 0.221,
+            "units": "ns",
+            "variance": 0.049
+        }
+    },
+    "argv": [
+        "/usr/vse/data/artefacts/dpll-terror.demuxed"
+    ],
+    "duration": 1660.5156057,
+    "pdf_display_name": "Verify TDEV (Time Deviation in locked mode) on path of 1PPS input to 1PPS output of DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references))",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_wander-TDEV-in-locked-mode_1PPS-to-DPLL_PRTC-A_testimpl.png",
+            "title": "1PPS-to-DPLL TDEV (filtered)"
+        }
+    ],
+    "reason": "loss of lock",
+    "result": false,
+    "timestamp": "2026-06-03T16:03:50+00:00"
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify TDEV (Time Deviation in locked mode) on path of 1PPS input to 1PPS output of DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references))" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-TDEV-in-locked-mode/1PPS-to-DPLL/PRTC-A/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-TDEV-in-locked-mode/1PPS-to-DPLL/PRTC-A/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify TDEV (Time Deviation in locked mode) on path of 1PPS input to 1PPS output of DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references))" time="1660.5156057">
+      <failure type="Failure" message="loss of lock" />
+      <system-out>{
+    "analysis": {
+        "tdev": {
+            "max": 0.684,
+            "mean": 0.375,
+            "min": 0.08,
+            "range": 0.604,
+            "stddev": 0.221,
+            "units": "ns",
+            "variance": 0.049
+        }
+    },
+    "argv": [
+        "/usr/vse/data/artefacts/dpll-terror.demuxed"
+    ],
+    "duration": 1660.5156057,
+    "pdf_display_name": "Verify TDEV (Time Deviation in locked mode) on path of 1PPS input to 1PPS output of DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references))",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_wander-TDEV-in-locked-mode_1PPS-to-DPLL_PRTC-B_testimpl.png",
+            "title": "1PPS-to-DPLL TDEV (filtered)"
+        }
+    ],
+    "reason": "loss of lock",
+    "result": false,
+    "timestamp": "2026-06-03T16:03:50+00:00"
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify TDEV (Time Deviation in locked mode) on path of 1PPS input to 1PPS output of DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references))" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-TDEV-in-locked-mode/1PPS-to-DPLL/PRTC-B/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-TDEV-in-locked-mode/1PPS-to-DPLL/PRTC-B/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify MTIE (Maximum Time Interval Error) on path of 1PPS input to 1PPS output of DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) with a 0.1 Hz low-pass filter" time="1660.5156057">
+      <failure type="Failure" message="loss of lock" />
+      <system-out>{
+    "analysis": {
+        "mtie": {
+            "max": 6.937,
+            "mean": 5.751,
+            "min": 1.517,
+            "range": 5.42,
+            "stddev": 1.403,
+            "units": "ns",
+            "variance": 1.969
+        }
+    },
+    "argv": [
+        "/usr/vse/data/artefacts/dpll-terror.demuxed"
+    ],
+    "duration": 1660.5156057,
+    "pdf_display_name": "Verify MTIE (Maximum Time Interval Error) on path of 1PPS input to 1PPS output of DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) with a 0.1 Hz low-pass filter",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_wander-MTIE-in-locked-mode_1PPS-to-DPLL_PRTC-A_testimpl.png",
+            "title": "1PPS-to-DPLL MTIE (filtered)"
+        }
+    ],
+    "reason": "loss of lock",
+    "result": false,
+    "timestamp": "2026-06-03T16:03:50+00:00"
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify MTIE (Maximum Time Interval Error) on path of 1PPS input to 1PPS output of DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) with a 0.1 Hz low-pass filter" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-MTIE-in-locked-mode/1PPS-to-DPLL/PRTC-A/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-MTIE-in-locked-mode/1PPS-to-DPLL/PRTC-A/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify MTIE (Maximum Time Interval Error) on path of 1PPS input to 1PPS output of DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) with a 0.1 Hz low-pass filter" time="1660.5156057">
+      <failure type="Failure" message="loss of lock" />
+      <system-out>{
+    "analysis": {
+        "mtie": {
+            "max": 6.937,
+            "mean": 5.751,
+            "min": 1.517,
+            "range": 5.42,
+            "stddev": 1.403,
+            "units": "ns",
+            "variance": 1.969
+        }
+    },
+    "argv": [
+        "/usr/vse/data/artefacts/dpll-terror.demuxed"
+    ],
+    "duration": 1660.5156057,
+    "pdf_display_name": "Verify MTIE (Maximum Time Interval Error) on path of 1PPS input to 1PPS output of DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) with a 0.1 Hz low-pass filter",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_wander-MTIE-in-locked-mode_1PPS-to-DPLL_PRTC-B_testimpl.png",
+            "title": "1PPS-to-DPLL MTIE (filtered)"
+        }
+    ],
+    "reason": "loss of lock",
+    "result": false,
+    "timestamp": "2026-06-03T16:03:50+00:00"
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify MTIE (Maximum Time Interval Error) on path of 1PPS input to 1PPS output of DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) with a 0.1 Hz low-pass filter" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-MTIE-in-locked-mode/1PPS-to-DPLL/PRTC-B/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-MTIE-in-locked-mode/1PPS-to-DPLL/PRTC-B/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify PHC state transitions" time="1979.5472334">
+      <system-out>{
+    "analysis": {
+        "clock_class_count": {
+            "FREERUN": {
+                "count": 0,
+                "transitions": {
+                    "FREERUN": 0,
+                    "HOLDOVER_IN_SPEC": 0,
+                    "HOLDOVER_OUT_SPEC1": 0,
+                    "HOLDOVER_OUT_SPEC2": 0,
+                    "HOLDOVER_OUT_SPEC3": 0,
+                    "LOCKED": 0
+                }
+            },
+            "HOLDOVER_IN_SPEC": {
+                "count": 0,
+                "transitions": {
+                    "FREERUN": 0,
+                    "HOLDOVER_IN_SPEC": 0,
+                    "HOLDOVER_OUT_SPEC1": 0,
+                    "HOLDOVER_OUT_SPEC2": 0,
+                    "HOLDOVER_OUT_SPEC3": 0,
+                    "LOCKED": 0
+                }
+            },
+            "HOLDOVER_OUT_SPEC1": {
+                "count": 0,
+                "transitions": {
+                    "FREERUN": 0,
+                    "HOLDOVER_IN_SPEC": 0,
+                    "HOLDOVER_OUT_SPEC1": 0,
+                    "HOLDOVER_OUT_SPEC2": 0,
+                    "HOLDOVER_OUT_SPEC3": 0,
+                    "LOCKED": 0
+                }
+            },
+            "HOLDOVER_OUT_SPEC2": {
+                "count": 0,
+                "transitions": {
+                    "FREERUN": 0,
+                    "HOLDOVER_IN_SPEC": 0,
+                    "HOLDOVER_OUT_SPEC1": 0,
+                    "HOLDOVER_OUT_SPEC2": 0,
+                    "HOLDOVER_OUT_SPEC3": 0,
+                    "LOCKED": 0
+                }
+            },
+            "HOLDOVER_OUT_SPEC3": {
+                "count": 0,
+                "transitions": {
+                    "FREERUN": 0,
+                    "HOLDOVER_IN_SPEC": 0,
+                    "HOLDOVER_OUT_SPEC1": 0,
+                    "HOLDOVER_OUT_SPEC2": 0,
+                    "HOLDOVER_OUT_SPEC3": 0,
+                    "LOCKED": 0
+                }
+            },
+            "LOCKED": {
+                "count": 1967,
+                "transitions": {
+                    "FREERUN": 0,
+                    "HOLDOVER_IN_SPEC": 0,
+                    "HOLDOVER_OUT_SPEC1": 0,
+                    "HOLDOVER_OUT_SPEC2": 0,
+                    "HOLDOVER_OUT_SPEC3": 0,
+                    "LOCKED": 1967
+                }
+            }
+        },
+        "total_transitions": 0
+    },
+    "argv": [
+        "/usr/vse/data/artefacts/phc-class.demuxed"
+    ],
+    "duration": 1979.5472334,
+    "pdf_display_name": "Verify PHC state transitions",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_phc_state-transitions_testimpl.png",
+            "title": "PHC State Transitions"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": "2026-06-03T15:58:30+00:00"
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify PHC state transitions" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/phc/state-transitions/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/phc/state-transitions/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify time error on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) [card-3]" time="1682.0">
+      <system-out>{
+    "analysis": {
+        "terror": {
+            "max": 1,
+            "mean": 0.0,
+            "min": -1,
+            "range": 2,
+            "stddev": 0.226,
+            "units": "ns",
+            "variance": 0.051
+        }
+    },
+    "argv": [
+        "/usr/vse/data/collected/linuxptp-daemon-container.log",
+        "/dev/ptp0",
+        "ens3f0"
+    ],
+    "duration": 1682.0,
+    "pdf_display_name": "Verify time error on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references))",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_time-error-in-locked-mode_DPLL-to-PHC_PRTC-A_testimpl.png",
+            "title": "DPLL-to-PHC Time Error (unfiltered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": 26423.889
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify time error on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) [card-3]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/time-error-in-locked-mode/DPLL-to-PHC/PRTC-A/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/time-error-in-locked-mode/DPLL-to-PHC/PRTC-A/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify time error on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) [card-3]" time="1682.0">
+      <system-out>{
+    "analysis": {
+        "terror": {
+            "max": 1,
+            "mean": 0.0,
+            "min": -1,
+            "range": 2,
+            "stddev": 0.226,
+            "units": "ns",
+            "variance": 0.051
+        }
+    },
+    "argv": [
+        "/usr/vse/data/collected/linuxptp-daemon-container.log",
+        "/dev/ptp0",
+        "ens3f0"
+    ],
+    "duration": 1682.0,
+    "pdf_display_name": "Verify time error on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references))",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_time-error-in-locked-mode_DPLL-to-PHC_PRTC-B_testimpl.png",
+            "title": "DPLL-to-PHC Time Error (unfiltered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": 26423.889
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify time error on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) [card-3]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/time-error-in-locked-mode/DPLL-to-PHC/PRTC-B/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/time-error-in-locked-mode/DPLL-to-PHC/PRTC-B/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify TDEV (Time Deviation in locked mode) on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) [card-3]" time="1682.0">
+      <system-out>{
+    "analysis": {
+        "tdev": {
+            "max": 0.042,
+            "mean": 0.016,
+            "min": 0.001,
+            "range": 0.041,
+            "stddev": 0.015,
+            "units": "ns",
+            "variance": 0.0
+        }
+    },
+    "argv": [
+        "/usr/vse/data/collected/linuxptp-daemon-container.log",
+        "/dev/ptp0",
+        "ens3f0"
+    ],
+    "duration": 1682.0,
+    "pdf_display_name": "Verify TDEV (Time Deviation in locked mode) on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references))",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_wander-TDEV-in-locked-mode_DPLL-to-PHC_PRTC-A_testimpl.png",
+            "title": "DPLL-to-PHC TDEV (filtered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": 26423.889
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify TDEV (Time Deviation in locked mode) on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) [card-3]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-TDEV-in-locked-mode/DPLL-to-PHC/PRTC-A/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-TDEV-in-locked-mode/DPLL-to-PHC/PRTC-A/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify TDEV (Time Deviation in locked mode) on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) [card-3]" time="1682.0">
+      <system-out>{
+    "analysis": {
+        "tdev": {
+            "max": 0.042,
+            "mean": 0.016,
+            "min": 0.001,
+            "range": 0.041,
+            "stddev": 0.015,
+            "units": "ns",
+            "variance": 0.0
+        }
+    },
+    "argv": [
+        "/usr/vse/data/collected/linuxptp-daemon-container.log",
+        "/dev/ptp0",
+        "ens3f0"
+    ],
+    "duration": 1682.0,
+    "pdf_display_name": "Verify TDEV (Time Deviation in locked mode) on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references))",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_wander-TDEV-in-locked-mode_DPLL-to-PHC_PRTC-B_testimpl.png",
+            "title": "DPLL-to-PHC TDEV (filtered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": 26423.889
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify TDEV (Time Deviation in locked mode) on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) [card-3]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-TDEV-in-locked-mode/DPLL-to-PHC/PRTC-B/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-TDEV-in-locked-mode/DPLL-to-PHC/PRTC-B/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify MTIE (Maximum Time Interval Error) on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) with a 0.1 Hz low-pass filter [card-3]" time="1682.0">
+      <system-out>{
+    "analysis": {
+        "mtie": {
+            "max": 0.302,
+            "mean": 0.296,
+            "min": 0.151,
+            "range": 0.151,
+            "stddev": 0.028,
+            "units": "ns",
+            "variance": 0.001
+        }
+    },
+    "argv": [
+        "/usr/vse/data/collected/linuxptp-daemon-container.log",
+        "/dev/ptp0",
+        "ens3f0"
+    ],
+    "duration": 1682.0,
+    "pdf_display_name": "Verify MTIE (Maximum Time Interval Error) on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) with a 0.1 Hz low-pass filter",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_wander-MTIE-in-locked-mode_DPLL-to-PHC_PRTC-A_testimpl.png",
+            "title": "DPLL-to-PHC MTIE (filtered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": 26423.889
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify MTIE (Maximum Time Interval Error) on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) with a 0.1 Hz low-pass filter [card-3]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-MTIE-in-locked-mode/DPLL-to-PHC/PRTC-A/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-MTIE-in-locked-mode/DPLL-to-PHC/PRTC-A/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify MTIE (Maximum Time Interval Error) on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) with a 0.1 Hz low-pass filter [card-3]" time="1682.0">
+      <system-out>{
+    "analysis": {
+        "mtie": {
+            "max": 0.302,
+            "mean": 0.296,
+            "min": 0.151,
+            "range": 0.151,
+            "stddev": 0.028,
+            "units": "ns",
+            "variance": 0.001
+        }
+    },
+    "argv": [
+        "/usr/vse/data/collected/linuxptp-daemon-container.log",
+        "/dev/ptp0",
+        "ens3f0"
+    ],
+    "duration": 1682.0,
+    "pdf_display_name": "Verify MTIE (Maximum Time Interval Error) on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) with a 0.1 Hz low-pass filter",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_wander-MTIE-in-locked-mode_DPLL-to-PHC_PRTC-B_testimpl.png",
+            "title": "DPLL-to-PHC MTIE (filtered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": 26423.889
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify MTIE (Maximum Time Interval Error) on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) with a 0.1 Hz low-pass filter [card-3]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-MTIE-in-locked-mode/DPLL-to-PHC/PRTC-B/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-MTIE-in-locked-mode/DPLL-to-PHC/PRTC-B/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify time error on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) [card-1]" time="1682.0">
+      <system-out>{
+    "analysis": {
+        "terror": {
+            "max": 1,
+            "mean": 0.0,
+            "min": -1,
+            "range": 2,
+            "stddev": 0.226,
+            "units": "ns",
+            "variance": 0.051
+        }
+    },
+    "argv": [
+        "/usr/vse/data/collected/linuxptp-daemon-container.log",
+        "/dev/ptp1",
+        "ens1f0"
+    ],
+    "duration": 1682.0,
+    "pdf_display_name": "Verify time error on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references))",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_time-error-in-locked-mode_DPLL-to-PHC_PRTC-A_testimpl.png",
+            "title": "DPLL-to-PHC Time Error (unfiltered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": 26423.889
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify time error on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) [card-1]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/time-error-in-locked-mode/DPLL-to-PHC/PRTC-A/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/time-error-in-locked-mode/DPLL-to-PHC/PRTC-A/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify time error on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) [card-1]" time="1682.0">
+      <system-out>{
+    "analysis": {
+        "terror": {
+            "max": 1,
+            "mean": 0.0,
+            "min": -1,
+            "range": 2,
+            "stddev": 0.226,
+            "units": "ns",
+            "variance": 0.051
+        }
+    },
+    "argv": [
+        "/usr/vse/data/collected/linuxptp-daemon-container.log",
+        "/dev/ptp1",
+        "ens1f0"
+    ],
+    "duration": 1682.0,
+    "pdf_display_name": "Verify time error on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references))",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_time-error-in-locked-mode_DPLL-to-PHC_PRTC-B_testimpl.png",
+            "title": "DPLL-to-PHC Time Error (unfiltered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": 26423.889
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify time error on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) [card-1]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/time-error-in-locked-mode/DPLL-to-PHC/PRTC-B/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/time-error-in-locked-mode/DPLL-to-PHC/PRTC-B/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify TDEV (Time Deviation in locked mode) on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) [card-1]" time="1682.0">
+      <system-out>{
+    "analysis": {
+        "tdev": {
+            "max": 0.042,
+            "mean": 0.016,
+            "min": 0.001,
+            "range": 0.042,
+            "stddev": 0.015,
+            "units": "ns",
+            "variance": 0.0
+        }
+    },
+    "argv": [
+        "/usr/vse/data/collected/linuxptp-daemon-container.log",
+        "/dev/ptp1",
+        "ens1f0"
+    ],
+    "duration": 1682.0,
+    "pdf_display_name": "Verify TDEV (Time Deviation in locked mode) on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references))",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_wander-TDEV-in-locked-mode_DPLL-to-PHC_PRTC-A_testimpl.png",
+            "title": "DPLL-to-PHC TDEV (filtered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": 26423.889
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify TDEV (Time Deviation in locked mode) on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) [card-1]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-TDEV-in-locked-mode/DPLL-to-PHC/PRTC-A/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-TDEV-in-locked-mode/DPLL-to-PHC/PRTC-A/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify TDEV (Time Deviation in locked mode) on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) [card-1]" time="1682.0">
+      <system-out>{
+    "analysis": {
+        "tdev": {
+            "max": 0.042,
+            "mean": 0.016,
+            "min": 0.001,
+            "range": 0.042,
+            "stddev": 0.015,
+            "units": "ns",
+            "variance": 0.0
+        }
+    },
+    "argv": [
+        "/usr/vse/data/collected/linuxptp-daemon-container.log",
+        "/dev/ptp1",
+        "ens1f0"
+    ],
+    "duration": 1682.0,
+    "pdf_display_name": "Verify TDEV (Time Deviation in locked mode) on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references))",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_wander-TDEV-in-locked-mode_DPLL-to-PHC_PRTC-B_testimpl.png",
+            "title": "DPLL-to-PHC TDEV (filtered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": 26423.889
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify TDEV (Time Deviation in locked mode) on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) [card-1]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-TDEV-in-locked-mode/DPLL-to-PHC/PRTC-B/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-TDEV-in-locked-mode/DPLL-to-PHC/PRTC-B/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify MTIE (Maximum Time Interval Error) on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) with a 0.1 Hz low-pass filter [card-1]" time="1682.0">
+      <system-out>{
+    "analysis": {
+        "mtie": {
+            "max": 0.302,
+            "mean": 0.296,
+            "min": 0.151,
+            "range": 0.151,
+            "stddev": 0.028,
+            "units": "ns",
+            "variance": 0.001
+        }
+    },
+    "argv": [
+        "/usr/vse/data/collected/linuxptp-daemon-container.log",
+        "/dev/ptp1",
+        "ens1f0"
+    ],
+    "duration": 1682.0,
+    "pdf_display_name": "Verify MTIE (Maximum Time Interval Error) on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) with a 0.1 Hz low-pass filter",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_wander-MTIE-in-locked-mode_DPLL-to-PHC_PRTC-A_testimpl.png",
+            "title": "DPLL-to-PHC MTIE (filtered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": 26423.889
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify MTIE (Maximum Time Interval Error) on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) with a 0.1 Hz low-pass filter [card-1]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-MTIE-in-locked-mode/DPLL-to-PHC/PRTC-A/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-MTIE-in-locked-mode/DPLL-to-PHC/PRTC-A/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify MTIE (Maximum Time Interval Error) on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) with a 0.1 Hz low-pass filter [card-1]" time="1682.0">
+      <system-out>{
+    "analysis": {
+        "mtie": {
+            "max": 0.302,
+            "mean": 0.296,
+            "min": 0.151,
+            "range": 0.151,
+            "stddev": 0.028,
+            "units": "ns",
+            "variance": 0.001
+        }
+    },
+    "argv": [
+        "/usr/vse/data/collected/linuxptp-daemon-container.log",
+        "/dev/ptp1",
+        "ens1f0"
+    ],
+    "duration": 1682.0,
+    "pdf_display_name": "Verify MTIE (Maximum Time Interval Error) on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) with a 0.1 Hz low-pass filter",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_wander-MTIE-in-locked-mode_DPLL-to-PHC_PRTC-B_testimpl.png",
+            "title": "DPLL-to-PHC MTIE (filtered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": 26423.889
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify MTIE (Maximum Time Interval Error) on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) with a 0.1 Hz low-pass filter [card-1]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-MTIE-in-locked-mode/DPLL-to-PHC/PRTC-B/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-MTIE-in-locked-mode/DPLL-to-PHC/PRTC-B/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify time error on path of SMA1 to DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) [card-1]">
+      <error type="Error" message="no data" />
+      <system-out>{
+    "analysis": {},
+    "argv": [
+        "/usr/vse/data/artefacts/dpll-terror.demuxed_ens1f0"
+    ],
+    "duration": null,
+    "pdf_display_name": "Verify time error on path of SMA1 to DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references))",
+    "reason": "no data",
+    "result": "error",
+    "timestamp": null
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify time error on path of SMA1 to DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) [card-1]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/time-error-in-locked-mode/SMA1-to-DPLL/PRTC-A/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/time-error-in-locked-mode/SMA1-to-DPLL/PRTC-A/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify time error on path of SMA1 to DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) [card-1]">
+      <error type="Error" message="no data" />
+      <system-out>{
+    "analysis": {},
+    "argv": [
+        "/usr/vse/data/artefacts/dpll-terror.demuxed_ens1f0"
+    ],
+    "duration": null,
+    "pdf_display_name": "Verify time error on path of SMA1 to DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references))",
+    "reason": "no data",
+    "result": "error",
+    "timestamp": null
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify time error on path of SMA1 to DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) [card-1]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/time-error-in-locked-mode/SMA1-to-DPLL/PRTC-B/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/time-error-in-locked-mode/SMA1-to-DPLL/PRTC-B/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify TDEV (Time Deviation in locked mode) on path of SMA1 to DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) [card-1]">
+      <error type="Error" message="no data" />
+      <system-out>{
+    "analysis": {},
+    "argv": [
+        "/usr/vse/data/artefacts/dpll-terror.demuxed_ens1f0"
+    ],
+    "duration": null,
+    "pdf_display_name": "Verify TDEV (Time Deviation in locked mode) on path of SMA1 to DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references))",
+    "reason": "no data",
+    "result": "error",
+    "timestamp": null
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify TDEV (Time Deviation in locked mode) on path of SMA1 to DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) [card-1]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-TDEV-in-locked-mode/SMA1-to-DPLL/PRTC-A/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-TDEV-in-locked-mode/SMA1-to-DPLL/PRTC-A/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify TDEV (Time Deviation in locked mode) on path of SMA1 to DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) [card-1]">
+      <error type="Error" message="no data" />
+      <system-out>{
+    "analysis": {},
+    "argv": [
+        "/usr/vse/data/artefacts/dpll-terror.demuxed_ens1f0"
+    ],
+    "duration": null,
+    "pdf_display_name": "Verify TDEV (Time Deviation in locked mode) on path of SMA1 to DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references))",
+    "reason": "no data",
+    "result": "error",
+    "timestamp": null
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify TDEV (Time Deviation in locked mode) on path of SMA1 to DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) [card-1]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-TDEV-in-locked-mode/SMA1-to-DPLL/PRTC-B/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-TDEV-in-locked-mode/SMA1-to-DPLL/PRTC-B/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify MTIE (Maximum Time Interval Error) on path of SMA1 to DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) with a 0.1 Hz low-pass filter [card-1]">
+      <error type="Error" message="no data" />
+      <system-out>{
+    "analysis": {},
+    "argv": [
+        "/usr/vse/data/artefacts/dpll-terror.demuxed_ens1f0"
+    ],
+    "duration": null,
+    "pdf_display_name": "Verify MTIE (Maximum Time Interval Error) on path of SMA1 to DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) with a 0.1 Hz low-pass filter",
+    "reason": "no data",
+    "result": "error",
+    "timestamp": null
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify MTIE (Maximum Time Interval Error) on path of SMA1 to DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) with a 0.1 Hz low-pass filter [card-1]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-MTIE-in-locked-mode/SMA1-to-DPLL/PRTC-A/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-MTIE-in-locked-mode/SMA1-to-DPLL/PRTC-A/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify MTIE (Maximum Time Interval Error) on path of SMA1 to DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) with a 0.1 Hz low-pass filter [card-1]">
+      <error type="Error" message="no data" />
+      <system-out>{
+    "analysis": {},
+    "argv": [
+        "/usr/vse/data/artefacts/dpll-terror.demuxed_ens1f0"
+    ],
+    "duration": null,
+    "pdf_display_name": "Verify MTIE (Maximum Time Interval Error) on path of SMA1 to DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) with a 0.1 Hz low-pass filter",
+    "reason": "no data",
+    "result": "error",
+    "timestamp": null
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify MTIE (Maximum Time Interval Error) on path of SMA1 to DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) with a 0.1 Hz low-pass filter [card-1]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-MTIE-in-locked-mode/SMA1-to-DPLL/PRTC-B/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-MTIE-in-locked-mode/SMA1-to-DPLL/PRTC-B/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify time error on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) [card-2]" time="1682.0">
+      <system-out>{
+    "analysis": {
+        "terror": {
+            "max": 1,
+            "mean": 0.0,
+            "min": -1,
+            "range": 2,
+            "stddev": 0.276,
+            "units": "ns",
+            "variance": 0.076
+        }
+    },
+    "argv": [
+        "/usr/vse/data/collected/linuxptp-daemon-container.log",
+        "/dev/ptp2",
+        "ens2f0"
+    ],
+    "duration": 1682.0,
+    "pdf_display_name": "Verify time error on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references))",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_time-error-in-locked-mode_DPLL-to-PHC_PRTC-A_testimpl.png",
+            "title": "DPLL-to-PHC Time Error (unfiltered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": 26423.889
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify time error on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) [card-2]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/time-error-in-locked-mode/DPLL-to-PHC/PRTC-A/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/time-error-in-locked-mode/DPLL-to-PHC/PRTC-A/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify time error on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) [card-2]" time="1682.0">
+      <system-out>{
+    "analysis": {
+        "terror": {
+            "max": 1,
+            "mean": 0.0,
+            "min": -1,
+            "range": 2,
+            "stddev": 0.276,
+            "units": "ns",
+            "variance": 0.076
+        }
+    },
+    "argv": [
+        "/usr/vse/data/collected/linuxptp-daemon-container.log",
+        "/dev/ptp2",
+        "ens2f0"
+    ],
+    "duration": 1682.0,
+    "pdf_display_name": "Verify time error on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references))",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_time-error-in-locked-mode_DPLL-to-PHC_PRTC-B_testimpl.png",
+            "title": "DPLL-to-PHC Time Error (unfiltered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": 26423.889
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify time error on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) [card-2]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/time-error-in-locked-mode/DPLL-to-PHC/PRTC-B/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/time-error-in-locked-mode/DPLL-to-PHC/PRTC-B/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify TDEV (Time Deviation in locked mode) on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) [card-2]" time="1682.0">
+      <system-out>{
+    "analysis": {
+        "tdev": {
+            "max": 0.068,
+            "mean": 0.026,
+            "min": 0.001,
+            "range": 0.067,
+            "stddev": 0.025,
+            "units": "ns",
+            "variance": 0.001
+        }
+    },
+    "argv": [
+        "/usr/vse/data/collected/linuxptp-daemon-container.log",
+        "/dev/ptp2",
+        "ens2f0"
+    ],
+    "duration": 1682.0,
+    "pdf_display_name": "Verify TDEV (Time Deviation in locked mode) on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references))",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_wander-TDEV-in-locked-mode_DPLL-to-PHC_PRTC-A_testimpl.png",
+            "title": "DPLL-to-PHC TDEV (filtered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": 26423.889
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify TDEV (Time Deviation in locked mode) on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) [card-2]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-TDEV-in-locked-mode/DPLL-to-PHC/PRTC-A/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-TDEV-in-locked-mode/DPLL-to-PHC/PRTC-A/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify TDEV (Time Deviation in locked mode) on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) [card-2]" time="1682.0">
+      <system-out>{
+    "analysis": {
+        "tdev": {
+            "max": 0.068,
+            "mean": 0.026,
+            "min": 0.001,
+            "range": 0.067,
+            "stddev": 0.025,
+            "units": "ns",
+            "variance": 0.001
+        }
+    },
+    "argv": [
+        "/usr/vse/data/collected/linuxptp-daemon-container.log",
+        "/dev/ptp2",
+        "ens2f0"
+    ],
+    "duration": 1682.0,
+    "pdf_display_name": "Verify TDEV (Time Deviation in locked mode) on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references))",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_wander-TDEV-in-locked-mode_DPLL-to-PHC_PRTC-B_testimpl.png",
+            "title": "DPLL-to-PHC TDEV (filtered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": 26423.889
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify TDEV (Time Deviation in locked mode) on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) [card-2]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-TDEV-in-locked-mode/DPLL-to-PHC/PRTC-B/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-TDEV-in-locked-mode/DPLL-to-PHC/PRTC-B/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify MTIE (Maximum Time Interval Error) on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) with a 0.1 Hz low-pass filter [card-2]" time="1682.0">
+      <system-out>{
+    "analysis": {
+        "mtie": {
+            "max": 0.394,
+            "mean": 0.383,
+            "min": 0.182,
+            "range": 0.213,
+            "stddev": 0.043,
+            "units": "ns",
+            "variance": 0.002
+        }
+    },
+    "argv": [
+        "/usr/vse/data/collected/linuxptp-daemon-container.log",
+        "/dev/ptp2",
+        "ens2f0"
+    ],
+    "duration": 1682.0,
+    "pdf_display_name": "Verify MTIE (Maximum Time Interval Error) on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) with a 0.1 Hz low-pass filter",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_wander-MTIE-in-locked-mode_DPLL-to-PHC_PRTC-A_testimpl.png",
+            "title": "DPLL-to-PHC MTIE (filtered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": 26423.889
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify MTIE (Maximum Time Interval Error) on path of DPLL to PHC in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) with a 0.1 Hz low-pass filter [card-2]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-MTIE-in-locked-mode/DPLL-to-PHC/PRTC-A/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-MTIE-in-locked-mode/DPLL-to-PHC/PRTC-A/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify MTIE (Maximum Time Interval Error) on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) with a 0.1 Hz low-pass filter [card-2]" time="1682.0">
+      <system-out>{
+    "analysis": {
+        "mtie": {
+            "max": 0.394,
+            "mean": 0.383,
+            "min": 0.182,
+            "range": 0.213,
+            "stddev": 0.043,
+            "units": "ns",
+            "variance": 0.002
+        }
+    },
+    "argv": [
+        "/usr/vse/data/collected/linuxptp-daemon-container.log",
+        "/dev/ptp2",
+        "ens2f0"
+    ],
+    "duration": 1682.0,
+    "pdf_display_name": "Verify MTIE (Maximum Time Interval Error) on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) with a 0.1 Hz low-pass filter",
+    "plot": [
+        {
+            "path": "/usr/vse/data/artefacts/plots/sync_G.8272_wander-MTIE-in-locked-mode_DPLL-to-PHC_PRTC-B_testimpl.png",
+            "title": "DPLL-to-PHC MTIE (filtered)"
+        }
+    ],
+    "reason": null,
+    "result": true,
+    "timestamp": 26423.889
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify MTIE (Maximum Time Interval Error) on path of DPLL to PHC in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) with a 0.1 Hz low-pass filter [card-2]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-MTIE-in-locked-mode/DPLL-to-PHC/PRTC-B/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-MTIE-in-locked-mode/DPLL-to-PHC/PRTC-B/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify time error on path of SMA1 to DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) [card-2]">
+      <error type="Error" message="no data" />
+      <system-out>{
+    "analysis": {},
+    "argv": [
+        "/usr/vse/data/artefacts/dpll-terror.demuxed_ens2f0"
+    ],
+    "duration": null,
+    "pdf_display_name": "Verify time error on path of SMA1 to DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references))",
+    "reason": "no data",
+    "result": "error",
+    "timestamp": null
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify time error on path of SMA1 to DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) [card-2]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/time-error-in-locked-mode/SMA1-to-DPLL/PRTC-A/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/time-error-in-locked-mode/SMA1-to-DPLL/PRTC-A/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify time error on path of SMA1 to DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) [card-2]">
+      <error type="Error" message="no data" />
+      <system-out>{
+    "analysis": {},
+    "argv": [
+        "/usr/vse/data/artefacts/dpll-terror.demuxed_ens2f0"
+    ],
+    "duration": null,
+    "pdf_display_name": "Verify time error on path of SMA1 to DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references))",
+    "reason": "no data",
+    "result": "error",
+    "timestamp": null
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify time error on path of SMA1 to DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) [card-2]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/time-error-in-locked-mode/SMA1-to-DPLL/PRTC-B/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/time-error-in-locked-mode/SMA1-to-DPLL/PRTC-B/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify TDEV (Time Deviation in locked mode) on path of SMA1 to DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) [card-2]">
+      <error type="Error" message="no data" />
+      <system-out>{
+    "analysis": {},
+    "argv": [
+        "/usr/vse/data/artefacts/dpll-terror.demuxed_ens2f0"
+    ],
+    "duration": null,
+    "pdf_display_name": "Verify TDEV (Time Deviation in locked mode) on path of SMA1 to DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references))",
+    "reason": "no data",
+    "result": "error",
+    "timestamp": null
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify TDEV (Time Deviation in locked mode) on path of SMA1 to DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) [card-2]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-TDEV-in-locked-mode/SMA1-to-DPLL/PRTC-A/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-TDEV-in-locked-mode/SMA1-to-DPLL/PRTC-A/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify TDEV (Time Deviation in locked mode) on path of SMA1 to DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) [card-2]">
+      <error type="Error" message="no data" />
+      <system-out>{
+    "analysis": {},
+    "argv": [
+        "/usr/vse/data/artefacts/dpll-terror.demuxed_ens2f0"
+    ],
+    "duration": null,
+    "pdf_display_name": "Verify TDEV (Time Deviation in locked mode) on path of SMA1 to DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references))",
+    "reason": "no data",
+    "result": "error",
+    "timestamp": null
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify TDEV (Time Deviation in locked mode) on path of SMA1 to DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) [card-2]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-TDEV-in-locked-mode/SMA1-to-DPLL/PRTC-B/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-TDEV-in-locked-mode/SMA1-to-DPLL/PRTC-B/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify MTIE (Maximum Time Interval Error) on path of SMA1 to DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) with a 0.1 Hz low-pass filter [card-2]">
+      <error type="Error" message="no data" />
+      <system-out>{
+    "analysis": {},
+    "argv": [
+        "/usr/vse/data/artefacts/dpll-terror.demuxed_ens2f0"
+    ],
+    "duration": null,
+    "pdf_display_name": "Verify MTIE (Maximum Time Interval Error) on path of SMA1 to DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) with a 0.1 Hz low-pass filter",
+    "reason": "no data",
+    "result": "error",
+    "timestamp": null
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify MTIE (Maximum Time Interval Error) on path of SMA1 to DPLL in locked condition PRTC-A (Higher accuracy (e.g. for GNSS-based primary references)) with a 0.1 Hz low-pass filter [card-2]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-MTIE-in-locked-mode/SMA1-to-DPLL/PRTC-A/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-MTIE-in-locked-mode/SMA1-to-DPLL/PRTC-A/" />
+      </properties>
+    </testcase>
+    <testcase classname="T-GM Tests" name="Verify MTIE (Maximum Time Interval Error) on path of SMA1 to DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) with a 0.1 Hz low-pass filter [card-2]">
+      <error type="Error" message="no data" />
+      <system-out>{
+    "analysis": {},
+    "argv": [
+        "/usr/vse/data/artefacts/dpll-terror.demuxed_ens2f0"
+    ],
+    "duration": null,
+    "pdf_display_name": "Verify MTIE (Maximum Time Interval Error) on path of SMA1 to DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) with a 0.1 Hz low-pass filter",
+    "reason": "no data",
+    "result": "error",
+    "timestamp": null
+}</system-out>
+      <properties>
+        <property name="test_id" value="Verify MTIE (Maximum Time Interval Error) on path of SMA1 to DPLL in locked condition PRTC-B (Lower accuracy (e.g. for holdover or less precise references)) with a 0.1 Hz low-pass filter [card-2]" />
+        <property name="test_specification" value="https://github.com/openshift-kni/vse-sync-tests/blob/c76a9ff6a497e47b2bda8d9bd4d35c0bfc78f33c/sync/G.8272/wander-MTIE-in-locked-mode/SMA1-to-DPLL/PRTC-B/" />
+        <property name="test_directory_url" value="https://github.com/openshift-kni/vse-sync-tests/tree/main/tests/sync/G.8272/wander-MTIE-in-locked-mode/SMA1-to-DPLL/PRTC-B/" />
+      </properties>
+    </testcase>
+  </testsuite>
+</testsuites>
