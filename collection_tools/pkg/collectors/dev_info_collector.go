@@ -109,9 +109,9 @@ func (ptpDev *DevInfoCollector) CleanUp() error {
 func verify(ptpDevInfo *devices.PTPDeviceInfo, constructor *CollectionConstructor) error {
 	checkErrors := make([]error, 0)
 	checks := []validations.Validation{
-		validations.NewDeviceDetails(ptpDevInfo),
-		validations.NewDeviceDriver(ptpDevInfo),
-		validations.NewDeviceFirmware(ptpDevInfo),
+		validations.NewDeviceDetails(ptpDevInfo, true),
+		validations.NewDeviceDriver(ptpDevInfo, true),
+		validations.NewDeviceFirmware(ptpDevInfo, true),
 	}
 
 	for _, check := range checks {

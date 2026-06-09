@@ -23,9 +23,14 @@ var (
 type DeviceDetails struct {
 	VendorID string `json:"vendorId"`
 	DeviceID string `json:"deviceId"`
+	strict   bool
 }
 
 func (dev *DeviceDetails) Verify() error {
+	if !dev.strict {
+		return nil
+	}
+
 	if dev.VendorID != VendorIntel || (dev.DeviceID != E810WesportChannel && dev.DeviceID != E810LoganBeach) {
 		return utils.NewInvalidEnvError(errors.New("NIC device is not based on E810"))
 	}
@@ -49,9 +54,10 @@ func (dev *DeviceDetails) GetOrder() int {
 	return deviceDetailsOrdering
 }
 
-func NewDeviceDetails(ptpDevInfo *devices.PTPDeviceInfo) *DeviceDetails {
+func NewDeviceDetails(ptpDevInfo *devices.PTPDeviceInfo, strict bool) *DeviceDetails {
 	return &DeviceDetails{
 		VendorID: ptpDevInfo.VendorID,
 		DeviceID: ptpDevInfo.DeviceID,
+		strict:   strict,
 	}
 }

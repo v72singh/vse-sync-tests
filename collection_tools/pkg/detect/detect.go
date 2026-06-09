@@ -62,6 +62,28 @@ func sortAndDeduplicateInterfaces(interfaces []DetectedInterface) []DetectedInte
 	return deduplicated
 }
 
+// ensureAtLeastOnePrimary marks the first interface as primary when every port is a
+// BC slave (masterOnly/serverOnly), so env verify and the main collector have a target NIC.
+func ensureAtLeastOnePrimary(interfaces []DetectedInterface) []DetectedInterface {
+	if len(interfaces) == 0 {
+		return interfaces
+	}
+
+	for _, iface := range interfaces {
+		if iface.Primary {
+			return interfaces
+		}
+	}
+
+	interfaces[0].Primary = true
+	log.Infof(
+		"No primary PTP interface detected; using %s for environment checks and main collection",
+		interfaces[0].Name,
+	)
+
+	return interfaces
+}
+
 func Detect(kubeConfig, ptpNodeName string, outputAsJSON bool, clockType string) {
 	clientset, err := clients.GetClientset(kubeConfig)
 	utils.IfErrorExitOrPanic(err)
@@ -69,6 +91,7 @@ func Detect(kubeConfig, ptpNodeName string, outputAsJSON bool, clockType string)
 	utils.IfErrorExitOrPanic(err)
 	interfaces, err := checkPTPConfig(ctx, clockType)
 	utils.IfErrorExitOrPanic(err)
+	interfaces = ensureAtLeastOnePrimary(interfaces)
 	output(os.Stdout, interfaces, outputAsJSON)
 }
 

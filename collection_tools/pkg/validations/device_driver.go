@@ -22,7 +22,7 @@ var (
 	outOfTreeIceDriverSegments = 3
 )
 
-func NewDeviceDriver(ptpDevInfo *devices.PTPDeviceInfo) *VersionWithErrorCheck {
+func NewDeviceDriver(ptpDevInfo *devices.PTPDeviceInfo, strict bool) *VersionWithErrorCheck {
 	var err error
 
 	checkVer := ptpDevInfo.DriverVersion
@@ -55,6 +55,7 @@ func NewDeviceDriver(ptpDevInfo *devices.PTPDeviceInfo) *VersionWithErrorCheck {
 			MinVersion:   minDriverVersion,
 			description:  deviceDriverVersionDescription,
 			order:        deviceDriverVersionOrdering,
+			strict:       strict,
 		},
 		Error: err,
 	}

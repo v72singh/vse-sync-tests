@@ -42,15 +42,27 @@ type VersionCheck struct {
 	MinVersion   string `json:"expected"`
 	description  string `json:"-"`
 	order        int    `json:"-"`
+	strict       bool   `json:"-"`
+}
+
+func normalizeSemverVersion(version string) string {
+	version = strings.TrimSpace(version)
+	version = strings.TrimPrefix(version, "v")
+
+	return "v" + strings.ReplaceAll(version, "_", "-")
 }
 
 func (verCheck *VersionCheck) Verify() error {
-	ver := "v" + strings.ReplaceAll(verCheck.checkVersion, "_", "-")
+	if !verCheck.strict {
+		return nil
+	}
+
+	ver := normalizeSemverVersion(verCheck.checkVersion)
 	if !semver.IsValid(ver) {
 		return fmt.Errorf("could not parse version %s", ver)
 	}
 
-	if semver.Compare(ver, "v"+verCheck.MinVersion) < 0 {
+	if semver.Compare(ver, normalizeSemverVersion(verCheck.MinVersion)) < 0 {
 		return utils.NewInvalidEnvError(
 			fmt.Errorf("unexpected version: %s < %s", verCheck.checkVersion, verCheck.MinVersion),
 		)
@@ -110,6 +122,10 @@ func (verCheck *VersionWithErrorCheck) MarshalJSON() ([]byte, error) {
 }
 
 func (verCheck *VersionWithErrorCheck) Verify() error {
+	if !verCheck.strict {
+		return nil
+	}
+
 	if verCheck.Error != nil {
 		return verCheck.Error
 	}
