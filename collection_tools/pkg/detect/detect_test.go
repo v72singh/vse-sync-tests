@@ -60,6 +60,22 @@ Capabilities:
 	})
 })
 
+func TestEnsureAtLeastOnePrimary(t *testing.T) {
+	t.Parallel()
+
+	ifaces := []DetectedInterface{
+		{Name: "eno8703np0", Primary: false},
+		{Name: "enp108s0f0np0", Primary: false},
+	}
+	result := ensureAtLeastOnePrimary(ifaces)
+	if !result[0].Primary {
+		t.Fatal("expected first interface to be promoted to primary")
+	}
+	if result[0].Name != "eno8703np0" {
+		t.Fatalf("unexpected primary interface %q", result[0].Name)
+	}
+}
+
 func TestDetect(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Detect Suite")

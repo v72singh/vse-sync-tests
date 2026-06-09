@@ -103,7 +103,19 @@ esac
 detect_configured_cards() {
     pushd "$COLLECTORPATH" >/dev/null 2>&1
     echo "Detecting cards configured in ptpconfig. Please wait..."
-    go run main.go detect --nodeName="$NODE_NAME" --kubeconfig="$LOCAL_KUBECONFIG" --use-analyser-format --clock-type="$TEST_MODE" > $DEVJSON
+    local detect_stderr="$ARTEFACTDIR/detect.stderr"
+    if ! go run main.go detect --nodeName="$NODE_NAME" --kubeconfig="$LOCAL_KUBECONFIG" --clock-type="$TEST_MODE" > "$DEVJSON" 2> "$detect_stderr"; then
+        echo "$0: error: interface detection failed" 1>&2
+        cat "$detect_stderr" 1>&2
+        exit 1
+    fi
+    if ! jq -e 'type == "array" and length > 0' "$DEVJSON" >/dev/null 2>&1; then
+        echo "$0: error: no PTP interfaces detected (invalid or empty $DEVJSON)" 1>&2
+        cat "$DEVJSON" 1>&2
+        cat "$detect_stderr" 1>&2
+        exit 1
+    fi
+    popd >/dev/null 2>&1
 }
 
 
@@ -120,7 +132,7 @@ if [ ! -z "$LOCAL_KUBECONFIG" ]; then
     if [ -z $NODE_NAME ]; then
         NUM_OF_NODES=$(oc --kubeconfig=$LOCAL_KUBECONFIG get nodes --output json | jq -j '.items | length')
         if [[ "$NUM_OF_NODES" -gt 1 ]]; then
-            echo "nodeName is required for an MNO cluster test run. Please pass in the nodename linked to the interface connected to the GNSS signal"
+            echo "nodeName is required for a multi-node cluster. Pass -n <node> or set PTPNODENAME to the PTP worker node (e.g. cloudransno-site21-dellgnrd.ericssonradio.bos2.lab)"
             exit 1
         fi
     fi
@@ -188,11 +200,7 @@ verify_env(){
     local junit_template
     junit_template=$(printf '.[].data + {"timestamp": "%s", "duration": 0}' "$dt")
     set +e
-    LOCAL_INTERFACE_NAME=$(jq -r '([.[] | select(.primary == true).name] | first) // .[0].name // empty' $DEVJSON)
-    if [ -z "$LOCAL_INTERFACE_NAME" ]; then
-        echo "$0: error: no PTP interfaces detected in $DEVJSON" 1>&2
-        exit 1
-    fi
+    LOCAL_INTERFACE_NAME=$(jq -r '([.[] | select(.primary == true).name] | first) // .[0].name // empty' "$DEVJSON")
     go run main.go env verify --interface="$LOCAL_INTERFACE_NAME" --nodeName="$NODE_NAME" --kubeconfig="$LOCAL_KUBECONFIG" --use-analyser-format --clock-type="$TEST_MODE" > $ENVJSONRAW
 
     if [ $? -gt 0 ]

@@ -91,20 +91,21 @@ func Detect(kubeConfig, ptpNodeName string, outputAsJSON bool, clockType string)
 	utils.IfErrorExitOrPanic(err)
 	interfaces, err := checkPTPConfig(ctx, clockType)
 	utils.IfErrorExitOrPanic(err)
+	if len(interfaces) == 0 {
+		utils.IfErrorExitOrPanic(errors.New("no PTP interfaces detected from ptp4l or ts2phc configuration"))
+	}
 	interfaces = ensureAtLeastOnePrimary(interfaces)
 	output(os.Stdout, interfaces, outputAsJSON)
 }
 
-func output(outWriter io.Writer, interfaces []DetectedInterface, outputAsJSON bool) {
-	if outputAsJSON {
-		out, err := json.MarshalIndent(interfaces, "", "  ")
-		utils.IfErrorExitOrPanic(err)
-		_, err = outWriter.Write(out)
-		utils.IfErrorExitOrPanic(err)
-	} else {
-		_, err := fmt.Fprintf(outWriter, "%T(%v)", interfaces, interfaces)
-		utils.IfErrorExitOrPanic(err)
+func output(outWriter io.Writer, interfaces []DetectedInterface, indent bool) {
+	out, err := json.Marshal(interfaces)
+	if indent {
+		out, err = json.MarshalIndent(interfaces, "", "  ")
 	}
+	utils.IfErrorExitOrPanic(err)
+	_, err = outWriter.Write(out)
+	utils.IfErrorExitOrPanic(err)
 }
 
 func parseConfig(contents string) (map[string][]string, error) {
@@ -230,17 +231,27 @@ func checkPTPConfig(ctx clients.ExecContext, clockType string) ([]DetectedInterf
 			return checkTs2PhcConfig(ctx)
 		}
 
-		return interfaces, nil
-	} else {
-		// For GM clocks, try ts2phc config first
-		interfaces, err := checkTs2PhcConfig(ctx)
-		if err != nil {
-			log.Info("ts2phc config not found, falling back to ptp4l config for GM clock")
-			return checkPtp4lConfig(ctx)
+		if len(interfaces) == 0 {
+			log.Info("no interfaces in ptp4l config, falling back to ts2phc config for BC clock")
+			return checkTs2PhcConfig(ctx)
 		}
 
 		return interfaces, nil
 	}
+
+	// For GM clocks, try ts2phc config first
+	interfaces, err := checkTs2PhcConfig(ctx)
+	if err != nil {
+		log.Info("ts2phc config not found, falling back to ptp4l config for GM clock")
+		return checkPtp4lConfig(ctx)
+	}
+
+	if len(interfaces) == 0 {
+		log.Info("no interfaces in ts2phc config, falling back to ptp4l config for GM clock")
+		return checkPtp4lConfig(ctx)
+	}
+
+	return interfaces, nil
 }
 
 func checkPtp4lConfig(ctx clients.ExecContext) ([]DetectedInterface, error) {
