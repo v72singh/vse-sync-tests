@@ -15,6 +15,7 @@ import (
 	"github.com/openshift-kni/vse-sync-tests/collection_tools/pkg/clients"
 	"github.com/openshift-kni/vse-sync-tests/collection_tools/pkg/collectors/contexts"
 	"github.com/openshift-kni/vse-sync-tests/collection_tools/pkg/collectors/devices"
+	"github.com/openshift-kni/vse-sync-tests/collection_tools/pkg/constants"
 	"github.com/openshift-kni/vse-sync-tests/collection_tools/pkg/utils"
 	"github.com/openshift-kni/vse-sync-tests/collection_tools/pkg/validations"
 )
@@ -108,10 +109,13 @@ func (ptpDev *DevInfoCollector) CleanUp() error {
 
 func verify(ptpDevInfo *devices.PTPDeviceInfo, constructor *CollectionConstructor) error {
 	checkErrors := make([]error, 0)
+	// T-GM (WPC / E810 reference): enforce Intel NIC model and version gates.
+	// T-BC (e.g. GNRD): record NIC info without E810-specific enforcement.
+	strictNIC := constructor.ClockType != constants.ClockTypeBC
 	checks := []validations.Validation{
-		validations.NewDeviceDetails(ptpDevInfo, true),
-		validations.NewDeviceDriver(ptpDevInfo, true),
-		validations.NewDeviceFirmware(ptpDevInfo, true),
+		validations.NewDeviceDetails(ptpDevInfo, strictNIC),
+		validations.NewDeviceDriver(ptpDevInfo, strictNIC),
+		validations.NewDeviceFirmware(ptpDevInfo, strictNIC),
 	}
 
 	for _, check := range checks {
