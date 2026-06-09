@@ -60,6 +60,23 @@ Capabilities:
 	})
 })
 
+func TestSortAndDeduplicateInterfacesByPTPDevice(t *testing.T) {
+	t.Parallel()
+
+	ifaces := []DetectedInterface{
+		{Name: "eno8803np1", PTPClockDevicePath: "/dev/ptp0", Primary: false},
+		{Name: "eno8703np0", PTPClockDevicePath: "/dev/ptp0", Primary: true},
+		{Name: "enp108s0f0np0", PTPClockDevicePath: "/dev/ptp1", Primary: false},
+	}
+	result := sortAndDeduplicateInterfaces(ifaces)
+	if len(result) != 2 {
+		t.Fatalf("expected 2 interfaces after dedup, got %d", len(result))
+	}
+	if result[0].Name != "eno8703np0" {
+		t.Fatalf("expected primary interface eno8703np0 to win ptp0 dedup, got %q", result[0].Name)
+	}
+}
+
 func TestEnsureAtLeastOnePrimary(t *testing.T) {
 	t.Parallel()
 

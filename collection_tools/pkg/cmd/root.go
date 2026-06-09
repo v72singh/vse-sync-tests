@@ -20,7 +20,7 @@ var (
 		Short: "A monitoring tool for PTP related metrics",
 		Long:  `A monitoring tool for PTP related metrics.`,
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
-			logging.SetupLogging(logLevel, os.Stdout)
+			logging.SetupLogging(logLevel, os.Stderr)
 		},
 	}
 )

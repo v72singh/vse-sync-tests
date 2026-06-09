@@ -106,6 +106,8 @@ func output(outWriter io.Writer, interfaces []DetectedInterface, indent bool) {
 	utils.IfErrorExitOrPanic(err)
 	_, err = outWriter.Write(out)
 	utils.IfErrorExitOrPanic(err)
+	_, err = outWriter.Write([]byte("\n"))
+	utils.IfErrorExitOrPanic(err)
 }
 
 func parseConfig(contents string) (map[string][]string, error) {
@@ -293,7 +295,7 @@ func checkPtp4lConfig(ctx clients.ExecContext) ([]DetectedInterface, error) {
 		detected = append(detected, getDetectedInterfacesFromPtp4l(ctx, config)...)
 	}
 
-	return detected, utils.MakeCompositeError("", errs) //nolint:wrapcheck //this just combines errors.
+	return sortAndDeduplicateInterfaces(detected), utils.MakeCompositeError("", errs) //nolint:wrapcheck //this just combines errors.
 }
 
 func getDetectedInterfacesFromPtp4l(ctx clients.ExecContext, config map[string][]string) []DetectedInterface {
@@ -366,5 +368,5 @@ func checkTs2PhcConfig(ctx clients.ExecContext) ([]DetectedInterface, error) { /
 		detected = append(detected, getDetectedInterfaces(ctx, config)...)
 	}
 
-	return detected, utils.MakeCompositeError("", errs) //nolint:wrapcheck //this just combines errors.
+	return sortAndDeduplicateInterfaces(detected), utils.MakeCompositeError("", errs) //nolint:wrapcheck //this just combines errors.
 }
