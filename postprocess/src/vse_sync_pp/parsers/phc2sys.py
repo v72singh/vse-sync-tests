@@ -20,7 +20,7 @@ class TimeErrorParser(Parser):
         """Return a regular expression string for parsing phc2sys log file lines"""
         return r'\s'.join((r'^phc2sys'
                           + r'\[([1-9][0-9]*\.[0-9]{3})\]:'  # timestamp
-                          + r'(?:\s\[ptp4l\.\d\..*\])?',  # configuration file name
+                          + r'(?:\s\[ptp4l\.[\w.:]+\])?',  # configuration file name
                             r'CLOCK_REALTIME phc offset\s*',
                             r'(-?[0-9]+)', # time error
                             r'(\S+)', # state

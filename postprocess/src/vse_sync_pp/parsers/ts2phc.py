@@ -44,7 +44,7 @@ class TimeErrorParser(Parser):
         return r''.join((
             r'^ts2phc'
             + r'\[([1-9][0-9]*\.?[0-9]*)\]:', # timestamp (with or without decimal)
-            r'(?:\s\[ts2phc\..*\])?',  # configuration file name
+            r'(?:\s\[ts2phc\.[\w.:]+\])?',  # configuration file name
             TimeErrorParser._interface_pattern(interface),
             r'(?:\smaster)?\s+offset\s*',
             r'\s(-?[0-9]+)', # time error
